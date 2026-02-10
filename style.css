@@ -98,7 +98,37 @@ header p {
 .btn-info { background: linear-gradient(to bottom, #2ecc71, #27ae60); }
 .btn-feedback { background: linear-gradient(to bottom, #f39c12, #d35400); }
 
-/* --- Стили для отображения событий (как раньше) --- */
+/* --- Стили для подменю Arc Raiders (голубые) --- */
+.submenu-btn {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Голубой градиент, как у основной кнопки "Arc Raiders" */
+  background: linear-gradient(to bottom, #3498db, #2980b9);
+  width: 100%; /* Кнопка на всю ширину контейнера */
+  margin: 8px 0; /* Отступы сверху и снизу */
+}
+
+.submenu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submenu-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Стили для отображения событий --- */
 .event-item {
   background-color: #f9f9f9;
   border: 1px solid #eee;
@@ -125,3 +155,8 @@ header p {
 
 #main-content h2 { font-size: 1.4rem; color: #2c3e50; }
 #main-content h3 { font-size: 1.1rem; color: #34495e; }
+
+.no-data {
+  color: #777;
+  text-align: center;
+}
