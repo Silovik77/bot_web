@@ -4,7 +4,7 @@ async function loadEvents() {
     const apiUrl = 'https://arc-raiders-api-render.onrender.com/api/user_events';
     const response = await fetch(apiUrl);
     if (!response.ok) {
-      throw new Error(`Ошибка сервера: ${response.status}`);
+      throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
     return data;
@@ -19,10 +19,10 @@ function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-    <button class="menu-btn" onclick="showEvents()">События</button>
-    <button class="menu-btn" onclick="alert('Раздел \\'Обновления\\' в разработке.')">Обновления</button>
-    <button class="menu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
-    <button class="menu-btn back-btn" onclick="showMainMenu()">Назад</button>
+    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Обновления\\' в разработке.')">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 }
 
@@ -66,12 +66,12 @@ async function showEvents() {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
     }
 
-    html += '<button class="menu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
 
   } catch (error) {
     const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="menu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
   }
 }
 
