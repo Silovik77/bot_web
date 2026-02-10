@@ -21,8 +21,10 @@ body {
   padding: 20px;
   background-color: white;
   border-radius: 16px;
-  /* Добавляем тень, чтобы контейнер выглядел объёмным */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  /* Добавляем отступ снизу для панели навигации */
+  padding-bottom: 80px;
+  position: relative;
 }
 
 header h1 {
@@ -37,102 +39,89 @@ header p {
   margin-top: 8px;
 }
 
-main {
+/* Основной контент */
+#main-content {
+  margin-top: 20px;
+  text-align: center;
+  color: #555;
+}
+
+/* --- Новая нижняя панель навигации --- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 30px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 8px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+  border-radius: 12px 12px 0 0;
 }
 
 .nav-btn {
-  height: 100px;
+  height: 50px; /* Сделали кнопки меньше */
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
+  border-radius: 8px;
+  font-size: 0.75rem; /* Меньший шрифт */
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.1s, box-shadow 0.1s;
   color: white;
-  /* Добавляем базовую тень */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 4px;
 }
 
-/* Эффект наведения: кнопка поднимается и тень увеличивается */
 .nav-btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Эффект нажатия: кнопка опускается */
 .nav-btn:active {
   transform: translateY(0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Градиенты для разных кнопок */
-.btn-primary {
-  background: linear-gradient(to right, #3498db, #2980b9);
-}
-.btn-secondary {
-  background: linear-gradient(to right, #9b59b6, #8e44ad);
-}
-.btn-accent {
-  background: linear-gradient(to right, #e74c3c, #c0392b);
-}
-.btn-info {
-  background: linear-gradient(to right, #2ecc71, #27ae60);
-}
+/* Градиенты для новых кнопок */
+.btn-primary { background: linear-gradient(to bottom, #3498db, #2980b9); }
+.btn-secondary { background: linear-gradient(to bottom, #9b59b6, #8e44ad); }
+.btn-accent { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
+.btn-info { background: linear-gradient(to bottom, #2ecc71, #27ae60); }
+.btn-feedback { background: linear-gradient(to bottom, #f39c12, #d35400); }
 
-/* --- Новые стили для отображения событий --- */
+/* --- Стили для отображения событий (как раньше) --- */
 .event-item {
   background-color: #f9f9f9;
   border: 1px solid #eee;
   border-radius: 8px;
   padding: 12px;
   display: grid;
-  grid-template-columns: 1fr 1fr auto; /* Имя | Карта | Время */
+  grid-template-columns: 1fr 1fr auto;
   gap: 8px;
   font-size: 0.95rem;
 }
 
-.event-item.active {
-  border-left: 4px solid #4CAF50; /* Зелёная полоса для активных */
-}
+.event-item.active { border-left: 4px solid #4CAF50; }
+.event-item.upcoming { border-left: 4px solid #FFC107; }
 
-.event-item.upcoming {
-  border-left: 4px solid #FFC107; /* Жёлтая полоса для предстоящих */
-}
+.event-name { font-weight: bold; color: #2c3e50; }
+.event-location { color: #7f8c8d; }
+.event-time-left { color: #e74c3c; font-weight: bold; justify-self: end; }
 
-.event-name {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.event-location {
-  color: #7f8c8d;
-}
-
-.event-time-left {
-  color: #e74c3c;
-  font-weight: bold;
-  justify-self: end;
-}
-
-main h2, main h3 {
+#main-content h2, #main-content h3 {
   margin-top: 20px;
   margin-bottom: 10px;
   grid-column: 1 / -1;
 }
 
-main h2 {
-  font-size: 1.4rem;
-  color: #2c3e50;
-}
-
-main h3 {
-  font-size: 1.1rem;
-  color: #34495e;
-}
+#main-content h2 { font-size: 1.4rem; color: #2c3e50; }
+#main-content h3 { font-size: 1.1rem; color: #34495e; }
