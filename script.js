@@ -1,8 +1,7 @@
 // --- Функция для загрузки событий ---
 async function loadEvents() {
   try {
-    // Замените URL на ваш сервер, где запущен bot.py
-    // Если вы запускаете bot.py локально, используйте IP вашего компьютера
+    // Запрашиваем данные с локального сервера
     const response = await fetch('http://localhost:8080/api/user_events');
     if (!response.ok) {
       throw new Error(`Ошибка: ${response.status}`);
@@ -71,7 +70,9 @@ async function loadEvents() {
 
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
-    alert('Ошибка: не удалось загрузить события');
+    // Показываем ошибку в интерфейсе Web App
+    const mainContainer = document.querySelector('main');
+    mainContainer.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
   }
 }
 
@@ -82,4 +83,3 @@ document.addEventListener('DOMContentLoaded', () => {
     eventsBtn.onclick = loadEvents;
   }
 });
-
