@@ -1,10 +1,17 @@
 // --- Функция для загрузки событий ---
 async function loadEvents() {
   try {
-    // Замените URL на ваш Render-адрес или localhost (если тестируете локально)
-    const response = await fetch('https://arc-raiders-api-render.onrender.com/');
-    // Если тестируете локально, используйте:
+    // 🔴 Старая строка (удалите её):
     // const response = await fetch('http://localhost:8080/api/user_events');
+
+    // ✅ Новая строка (вставьте её):
+    const response = await fetch('https://arc-raiders-api.onrender.com/api/user_events');
+
+    if (!response.ok) {
+      throw new Error(`Ошибка: ${response.status}`);
+    }
+    const data = await response.json();
+    // ... остальной код ...
 
     if (!response.ok) {
       throw new Error(`Ошибка: ${response.status}`);
@@ -105,3 +112,4 @@ document.addEventListener('DOMContentLoaded', () => {
     eventsBtn.onclick = loadEvents;
   }
 });
+
