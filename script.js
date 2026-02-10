@@ -77,11 +77,10 @@ async function loadEvents() {
   }
 }
 
-// --- Инициализация: всегда показываем кнопки, даже без Telegram ---
+// --- Инициализация: всегда показываем кнопки ---
 document.addEventListener('DOMContentLoaded', () => {
   const mainContainer = document.querySelector('main');
   
-  // Если контент пустой — создаём кнопки
   if (mainContainer.children.length === 0) {
     mainContainer.innerHTML = `
       <button class="nav-btn btn-primary" onclick="loadEvents()">
@@ -99,10 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // Убеждаемся, что кнопка "События" работает
   const eventsBtn = document.querySelector('.btn-primary');
   if (eventsBtn) {
     eventsBtn.onclick = loadEvents;
   }
 });
-
