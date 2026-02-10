@@ -1,78 +1,13 @@
-// --- Функция для загрузки событий ---
-async function loadEvents() {
-  try {
-    const apiUrl = 'https://arc-raiders-api-render.onrender.com/api/user_events';
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Ошибка при загрузке событий:', error);
-    throw error;
-  }
-}
-
 // --- Отображение меню Arc Raiders ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'События\\' временно недоступен.')">События</button>
     <button class="submenu-btn" onclick="alert('Раздел \\'Обновления\\' в разработке.')">Обновления</button>
     <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
-}
-
-// --- Отображение событий ---
-async function showEvents() {
-  try {
-    const data = await loadEvents();
-    const mainContent = document.getElementById('main-content');
-    
-    let html = '<h2>📅 События ARC Raiders</h2>';
-    
-    // Активные события
-    if (data.active && data.active.length > 0) {
-      html += '<h3>🟢 Активные</h3>';
-      data.active.forEach(event => {
-        html += `
-          <div class="event-item active">
-            <span class="event-name">${event.name}</span>
-            <span class="event-location">${event.location}</span>
-            <span class="event-time-left">⏱️ Осталось: ${event.time_left}</span>
-          </div>
-        `;
-      });
-    } else {
-      html += '<p class="no-data">🟢 Нет активных событий</p>';
-    }
-
-    // Предстоящие события
-    if (data.upcoming && data.upcoming.length > 0) {
-      html += '<h3>🔴 Предстоящие</h3>';
-      data.upcoming.forEach(event => {
-        html += `
-          <div class="event-item upcoming">
-            <span class="event-name">${event.name}</span>
-            <span class="event-location">${event.location}</span>
-            <span class="event-time-left">⏱️ Начнётся через: ${event.time_left}</span>
-          </div>
-        `;
-      });
-    } else {
-      html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
-    }
-
-    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
-    mainContent.innerHTML = html;
-
-  } catch (error) {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
-  }
 }
 
 // --- Отображение формы для стримеров ---
