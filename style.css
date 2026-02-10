@@ -22,7 +22,6 @@ body {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  /* Добавляем отступ снизу для панели навигации */
   padding-bottom: 80px;
   position: relative;
 }
@@ -65,14 +64,14 @@ header p {
 }
 
 .nav-btn {
-  height: 50px; /* Сделали кнопки меньше */
+  height: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: none;
   border-radius: 8px;
-  font-size: 0.75rem; /* Меньший шрифт */
+  font-size: 0.75rem;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
@@ -91,7 +90,6 @@ header p {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Градиенты для новых кнопок */
 .btn-primary { background: linear-gradient(to bottom, #3498db, #2980b9); }
 .btn-secondary { background: linear-gradient(to bottom, #9b59b6, #8e44ad); }
 .btn-accent { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
@@ -112,10 +110,9 @@ header p {
   transition: transform 0.1s, box-shadow 0.1s;
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Голубой градиент, как у основной кнопки "Arc Raiders" */
   background: linear-gradient(to bottom, #3498db, #2980b9);
-  width: 100%; /* Кнопка на всю ширину контейнера */
-  margin: 8px 0; /* Отступы сверху и снизу */
+  width: 100%;
+  margin: 8px 0;
 }
 
 .submenu-btn:hover {
@@ -128,38 +125,6 @@ header p {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Стили для отображения событий --- */
-.event-item {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 8px;
-  font-size: 0.95rem;
-}
-
-.event-item.active { border-left: 4px solid #4CAF50; }
-.event-item.upcoming { border-left: 4px solid #FFC107; }
-
-.event-name { font-weight: bold; color: #2c3e50; }
-.event-location { color: #7f8c8d; }
-.event-time-left { color: #e74c3c; font-weight: bold; justify-self: end; }
-
-#main-content h2, #main-content h3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  grid-column: 1 / -1;
-}
-
-#main-content h2 { font-size: 1.4rem; color: #2c3e50; }
-#main-content h3 { font-size: 1.1rem; color: #34495e; }
-
-.no-data {
-  color: #777;
-  text-align: center;
-}
 /* --- Стили для формы стримеров --- */
 #streamer-form {
   width: 100%;
