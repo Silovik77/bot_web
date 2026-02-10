@@ -1,8 +1,8 @@
 // --- Функция для загрузки событий ---
 async function loadEvents() {
   try {
-    // 🔥 ЗАМЕНИТЕ ЭТОТ URL НА ВАШ РЕАЛЬНЫЙ АДРЕС С RENDER 🔥
-    const apiUrl = 'https://arc-raiders-api-render.onrender.com';
+    // 🔥 ИСПОЛЬЗУЕМ ВАШ РЕАЛЬНЫЙ АДРЕС RENDER 🔥
+    const apiUrl = 'https://arc-raiders-api-render.onrender.com/api/user_events';
     
     const response = await fetch(apiUrl);
     if (!response.ok) {
