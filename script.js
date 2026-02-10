@@ -1,20 +1,12 @@
 // --- Функция для загрузки событий ---
 async function loadEvents() {
   try {
-    // 🔴 Старая строка (удалите её):
-    // const response = await fetch('http://localhost:8080/api/user_events');
-
-    // ✅ Новая строка (вставьте её):
-    const response = await fetch('https://arc-raiders-api.onrender.com/api/user_events');
-
+    // 🔥 ЗАМЕНИТЕ ЭТОТ URL НА ВАШ РЕАЛЬНЫЙ АДРЕС С RENDER 🔥
+    const apiUrl = 'https://arc-raiders-api-render.onrender.com/';
+    
+    const response = await fetch(apiUrl);
     if (!response.ok) {
-      throw new Error(`Ошибка: ${response.status}`);
-    }
-    const data = await response.json();
-    // ... остальной код ...
-
-    if (!response.ok) {
-      throw new Error(`Ошибка: ${response.status}`);
+      throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
 
@@ -81,35 +73,35 @@ async function loadEvents() {
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     const mainContainer = document.querySelector('main');
-    mainContainer.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
+    mainContainer.innerHTML = `<p style="color: red; text-align: center; margin-top: 20px;">❌ Ошибка: ${error.message}</p>`;
   }
 }
 
 // --- Инициализация: всегда показываем кнопки, даже без Telegram ---
 document.addEventListener('DOMContentLoaded', () => {
-  // Создаём кнопки вручную, если их нет
   const mainContainer = document.querySelector('main');
+  
+  // Если контент пустой — создаём кнопки
   if (mainContainer.children.length === 0) {
     mainContainer.innerHTML = `
       <button class="nav-btn btn-primary" onclick="loadEvents()">
         <span>📅 События</span>
       </button>
-      <button class="nav-btn btn-secondary" onclick="alert('Клан NE')">
+      <button class="nav-btn btn-secondary" onclick="alert('Раздел \\'Клан NE\\' в разработке.')">
         <span>⚔️ Клан NE</span>
       </button>
-      <button class="nav-btn btn-accent" onclick="alert('Обновления')">
+      <button class="nav-btn btn-accent" onclick="alert('Обновления игры скоро появятся здесь!')">
         <span>📢 Обновления</span>
       </button>
-      <button class="nav-btn btn-info" onclick="alert('Ссылки')">
+      <button class="nav-btn btn-info" onclick="window.open('https://t.me/silovik_stream', '_blank')">
         <span>🔗 Ссылки</span>
       </button>
     `;
   }
 
-  // Добавляем обработчик к первой кнопке
+  // Убеждаемся, что кнопка "События" работает
   const eventsBtn = document.querySelector('.btn-primary');
   if (eventsBtn) {
     eventsBtn.onclick = loadEvents;
   }
 });
-
