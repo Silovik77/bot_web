@@ -15,7 +15,7 @@ if (window.Telegram && window.Telegram.WebApp) {
   async function loadEvents() {
     try {
       // Запрашиваем данные с локального сервера
-      const response = await fetch('http://localhost:8080/api/user_events');
+      const response = await fetch('https://arc-raiders-api-render.onrender.com/');
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status}`);
       }
@@ -102,3 +102,4 @@ if (window.Telegram && window.Telegram.WebApp) {
   // Для тестирования в браузере, можно вывести заглушку
   document.querySelector('main').innerHTML = '<p>Запустите Web App через Telegram бота для получения данных.</p>';
 }
+
