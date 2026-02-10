@@ -1,4 +1,4 @@
-/* Обнуление */
+/* (Старые стили остаются без изменений) */
 * {
   margin: 0;
   padding: 0;
@@ -36,15 +36,16 @@ header p {
   margin-top: 8px;
 }
 
+/* (Стили для кнопок остаются без изменений) */
 main {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   margin-top: 30px;
 }
 
 .nav-btn {
-  height: 100px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,4 +82,39 @@ main {
 
 .btn-info {
   background: linear-gradient(to right, #2ecc71, #27ae60);
+}
+
+/* --- Новые стили для отображения событий --- */
+.event-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto; /* Имя | Карта | Время */
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.event-name {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.event-location {
+  color: #7f8c8d;
+}
+
+.event-time-left {
+  color: #e74c3c;
+  font-weight: bold;
+  justify-self: end;
+}
+
+main h2 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  grid-column: 1 / -1; /* Занимает всю ширину */
 }
