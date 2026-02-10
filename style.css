@@ -160,3 +160,29 @@ header p {
   color: #777;
   text-align: center;
 }
+/* --- Стили для формы стримеров --- */
+#streamer-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+#streamer-form label {
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: left;
+}
+
+#streamer-form input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+#streamer-form input:focus {
+  outline: none;
+  border-color: #3498db;
+}
