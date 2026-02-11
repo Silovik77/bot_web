@@ -273,3 +273,4 @@ function showStreamersForm() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
