@@ -1,4 +1,4 @@
-// Укажите ваш реальный URL
+// Укажите ваш реальный URL Amvera
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Функция для загрузки событий ---
@@ -28,41 +28,91 @@ function showArcRaidersMenu() {
   `;
 }
 
+// --- Вспомогательные функции ---
+function formatTimeMs(ms) {
+  const sec = Math.floor(ms / 1000);
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  const parts = [];
+  if (h) parts.push(`${h}ч`);
+  if (m) parts.push(`${m}м`);
+  if (s || !parts.length) parts.push(`${s}с`);
+  return parts.join(' ');
+}
+
+function parseTimeStr(str) {
+  let total = 0;
+  const re = /(\d+)([чмс])/g;
+  let match;
+  while ((match = re.exec(str))) {
+    const val = parseInt(match[1]);
+    const unit = match[2];
+    if (unit === 'ч') total += val * 3600;
+    if (unit === 'м') total += val * 60;
+    if (unit === 'с') total += val;
+  }
+  return total;
+}
+
 // --- Отображение событий ---
 async function showEvents() {
   try {
-    const data = await loadEvents();
+    const rawData = await loadEvents();
+    
+    // Парсим сырые данные из API MetaForge
+    const events = rawData.data || [];
+    const currentTimestamp = Date.now(); // в миллисекундах
+
+    const activeEvents = [];
+    const upcomingEvents = [];
+
+    for (const event of events) {
+      const name = event.name || 'Неизвестное событие';
+      const location = event.map || 'Неизвестная карта';
+      const start = event.startTime;
+      const end = event.endTime;
+
+      if (!start || !end) continue;
+
+      if (start <= currentTimestamp && currentTimestamp < end) {
+        // Активное событие
+        const timeLeftMs = end - currentTimestamp;
+        const timeLeftStr = formatTimeMs(timeLeftMs);
+        activeEvents.push({ name, location, time_left: timeLeftStr });
+      } else if (currentTimestamp < start) {
+        // Предстоящее
+        const timeToStartMs = start - currentTimestamp;
+        const timeToStartStr = formatTimeMs(timeToStartMs);
+        upcomingEvents.push({ name, location, time_left: timeToStartStr });
+      }
+    }
+
+    // Сортируем предстоящие по времени начала
+    upcomingEvents.sort((a, b) => {
+      const aSec = parseTimeStr(a.time_left);
+      const bSec = parseTimeStr(b.time_left);
+      return aSec - bSec;
+    });
+
     const mainContent = document.getElementById('main-content');
-    
     let html = '<h2>📅 События ARC Raiders</h2>';
-    
-    // Активные события
-    if (data.active && data.active.length > 0) {
+
+    // Активные
+    if (activeEvents.length > 0) {
       html += '<h3>🟢 Активные</h3>';
-      data.active.forEach(event => {
-        html += `
-          <div class="event-item active">
-            <span class="event-name">${event.name}</span>
-            <span class="event-location">${event.location}</span>
-            <span class="event-time-left">⏱️ Осталось: ${event.time_left}</span>
-          </div>
-        `;
+      activeEvents.forEach(e => {
+        html += `<div class="event-item active"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Осталось: ${e.time_left}</span></div>`;
       });
     } else {
       html += '<p class="no-data">🟢 Нет активных событий</p>';
     }
 
-    // Предстоящие события
-    if (data.upcoming && data.upcoming.length > 0) {
+    // Предстоящие
+    if (upcomingEvents.length > 0) {
       html += '<h3>🔴 Предстоящие</h3>';
-      data.upcoming.forEach(event => {
-        html += `
-          <div class="event-item upcoming">
-            <span class="event-name">${event.name}</span>
-            <span class="event-location">${event.location}</span>
-            <span class="event-time-left">⏱️ Начнётся через: ${event.time_left}</span>
-          </div>
-        `;
+      upcomingEvents.forEach(e => {
+        html += `<div class="event-item upcoming"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Начнётся через: ${e.time_left}</span></div>`;
       });
     } else {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
@@ -72,6 +122,7 @@ async function showEvents() {
     mainContent.innerHTML = html;
 
   } catch (error) {
+    console.error('Ошибка при загрузке событий:', error);
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
   }
@@ -134,4 +185,3 @@ function showMainMenu() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
-
