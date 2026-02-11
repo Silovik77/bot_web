@@ -8,13 +8,24 @@ async function loadEvents() {
     if (!response.ok) {
       throw new Error(`Ошибка сервера: ${response.status}`);
     }
-    // 🎯 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: получаем rawData
-    const rawData = await response.json();
-    return rawData;
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     throw error;
   }
+}
+
+// --- Отображение меню Arc Raiders ---
+function showArcRaidersMenu() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <h2>🎮 Arc Raiders</h2>
+    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Обновления\\' в разработке.')">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+  `;
 }
 
 // --- Вспомогательные функции ---
@@ -30,77 +41,26 @@ function formatTimeMs(ms) {
   return parts.join(' ');
 }
 
-function getMapIcon(map) {
-  const icons = {
-    "Dam": "💧",
-    "Buried City": "🏙️",
-    "Spaceport": "🚀",
-    "Blue Gate": "🔵",
-    "Stella Montis": "⛰️"
-  };
-  return icons[map] || "📍";
+function parseTimeStr(str) {
+  let total = 0;
+  const re = /(\d+)([чмс])/g;
+  let match;
+  while ((match = re.exec(str))) {
+    const val = parseInt(match[1]);
+    const unit = match[2];
+    if (unit === 'ч') total += val * 3600;
+    if (unit === 'м') total += val * 60;
+    if (unit === 'с') total += val;
+  }
+  return total;
 }
 
-function getEventIcon(name) {
-  const icons = {
-    "Night Raid": "🌙",
-    "Harvester": "🪴",
-    "Matriarch": "👑",
-    "Cold Snap": "❄️",
-    "Electromagnetic Storm": "⚡",
-    "Launch Tower Loot": "🎯",
-    "Hidden Bunker": "🔒",
-    "Husk Graveyard": "💀",
-    "Prospecting Probes": "📡",
-    "Uncovered Caches": "📦",
-    "Lush Blooms": "🌿",
-    "Locked Gate": "🚪"
-  };
-  return icons[name] || "❓";
-}
-
-// --- Отображение меню Arc Raiders ---
-function showArcRaidersMenu() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <h2>🎮 Arc Raiders</h2>
-
-    <!-- Фильтры -->
-    <div class="filters">
-      <select id="filter-map">
-        <option value="">Все карты</option>
-      </select>
-      <select id="filter-event">
-        <option value="">Все события</option>
-      </select>
-    </div>
-
-    <!-- Активные события -->
-    <h3>🟢 Активные</h3>
-    <div id="active-events" class="events-list"></div>
-
-    <!-- Предстоящие события -->
-    <h3>🔴 Предстоящие</h3>
-    <div id="upcoming-events" class="events-list"></div>
-
-    <!-- Подменю -->
-    <div class="arc-menu">
-      <button class="submenu-btn" onclick="showEventsPage()">События</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Обновления» в разработке.')">Обновления</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Гайды» в разработке.')">Гайды</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Испытание» в разработке.')">Испытание</button>
-      <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
-    </div>
-  `;
-  
-  loadAndDisplayEvents();
-}
-
-// --- Загрузка и отображение событий ---
-async function loadAndDisplayEvents() {
+// --- Отображение событий ---
+async function showEvents() {
   try {
     const rawData = await loadEvents();
-    // 🎯 Парсим rawData.data
+    
+    // Парсим сырые данные из API MetaForge
     const events = rawData.data || [];
     const currentTimestamp = Date.now(); // в миллисекундах
 
@@ -135,78 +95,37 @@ async function loadAndDisplayEvents() {
       return aSec - bSec;
     });
 
-    // Обновляем списки
-    updateEventList('active-events', activeEvents, 'active');
-    updateEventList('upcoming-events', upcomingEvents.slice(0, 10), 'upcoming'); // Максимум 10
+    const mainContent = document.getElementById('main-content');
+    let html = '<h2>📅 События ARC Raiders</h2>';
 
-    // Инициализируем фильтры
-    initFilters(events);
+    // Активные
+    if (activeEvents.length > 0) {
+      html += '<h3>🟢 Активные</h3>';
+      activeEvents.forEach(e => {
+        html += `<div class="event-item active"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Осталось: ${e.time_left}</span></div>`;
+      });
+    } else {
+      html += '<p class="no-data">🟢 Нет активных событий</p>';
+    }
+
+    // Предстоящие
+    if (upcomingEvents.length > 0) {
+      html += '<h3>🔴 Предстоящие</h3>';
+      upcomingEvents.forEach(e => {
+        html += `<div class="event-item upcoming"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Начнётся через: ${e.time_left}</span></div>`;
+      });
+    } else {
+      html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
+    }
+
+    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+    mainContent.innerHTML = html;
 
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
-    const activeEl = document.getElementById('active-events');
-    const upcomingEl = document.getElementById('upcoming-events');
-    if (activeEl) activeEl.innerHTML = '<p class="no-data">Ошибка загрузки активных событий</p>';
-    if (upcomingEl) upcomingEl.innerHTML = '<p class="no-data">Ошибка загрузки предстоящих событий</p>';
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
   }
-}
-
-// --- Вспомогательная функция для отрисовки списка ---
-function updateEventList(containerId, events, type) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-
-  if (events.length > 0) {
-    container.innerHTML = events.map(e => `
-      <div class="event-card ${type}">
-        <div class="event-icon">${getEventIcon(e.name)}</div>
-        <div class="event-info">
-          <div class="event-name">${e.name}</div>
-          <div class="event-location">${getMapIcon(e.location)} ${e.location}</div>
-        </div>
-        <div class="event-time">⏱️ ${
-          type === 'active' ? `Осталось: ${e.time_left}` : `Через: ${e.time_left}`
-        }</div>
-      </div>
-    `).join('');
-  } else {
-    container.innerHTML = `<p class="no-data">${
-      type === 'active' ? '🟢 Нет активных событий' : '🔴 Нет предстоящих событий'
-    }</p>`;
-  }
-}
-
-// --- Инициализация фильтров ---
-function initFilters(allEvents) {
-  const maps = [...new Set(allEvents.map(e => e.map))].sort();
-  const events = [...new Set(allEvents.map(e => e.name))].sort();
-
-  const mapSelect = document.getElementById('filter-map');
-  const eventSelect = document.getElementById('filter-event');
-
-  if (mapSelect) {
-    mapSelect.innerHTML = `<option value="">Все карты</option>` +
-      maps.map(m => `<option value="${m}">${m}</option>`).join('');
-  }
-  if (eventSelect) {
-    eventSelect.innerHTML = `<option value="">Все события</option>` +
-      events.map(n => `<option value="${n}">${n}</option>`).join('');
-  }
-
-  // Добавляем обработчики фильтров
-  mapSelect?.addEventListener('change', applyFilters);
-  eventSelect?.addEventListener('change', applyFilters);
-}
-
-// --- Применение фильтров (простое обновление) ---
-function applyFilters() {
-  // Перезагружаем события (с фильтрацией на клиенте, если нужно, или на сервере)
-  loadAndDisplayEvents();
-}
-
-// --- Отображение страницы событий (для кнопки "События") ---
-function showEventsPage() {
-  showArcRaidersMenu(); // Просто показываем меню, события загружаются в loadAndDisplayEvents
 }
 
 // --- Отображение формы для стримеров ---
@@ -227,6 +146,7 @@ function showStreamersForm() {
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 
+  // Обработчик отправки формы
   document.getElementById('streamer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const channelId = document.getElementById('channel-id').value;
@@ -235,7 +155,9 @@ function showStreamersForm() {
     try {
       const response = await fetch(`${API_URL}/api/register_streamer`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ channel_id: channelId, twitch_url: twitchUrl })
       });
 
@@ -247,37 +169,16 @@ function showStreamersForm() {
         alert(`❌ Ошибка: ${error.error}`);
       }
     } catch (error) {
-      console.error('Ошибка:', error);
+      console.error('Ошибка при подключении:', error);
       alert('❌ Не удалось подключиться к серверу.');
     }
   });
 }
 
-// --- Вспомогательная функция для фильтров ---
-function parseTimeStr(str) {
-  let total = 0;
-  const re = /(\d+)([чмс])/g;
-  let match;
-  while ((match = re.exec(str))) {
-    const val = parseInt(match[1]);
-    const unit = match[2];
-    if (unit === 'ч') total += val * 3600;
-    if (unit === 'м') total += val * 60;
-    if (unit === 'с') total += val;
-  }
-  return total;
-}
-
 // --- Отображение главного меню ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-    <div class="main-menu">
-      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
-    </div>
-  `;
+  mainContent.innerHTML = '<p>Добро пожаловать! Выберите раздел в меню ниже.</p>';
 }
 
 // --- Инициализация ---
