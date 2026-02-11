@@ -1,153 +1,194 @@
-/* Обнуление */
+/* Общие стили */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f7fa;
   color: #333;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  line-height: 1.6;
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.container {
-  width: 100%;
-  max-width: 500px;
-  padding: 20px;
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  padding-bottom: 80px;
-  position: relative;
-}
-
-header h1 {
-  font-size: 1.8rem;
+h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #2c3e50;
   text-align: center;
-  color: #007AFF;
 }
 
-header p {
-  text-align: center;
-  color: #666;
-  margin-top: 8px;
+h3 {
+  font-size: 18px;
+  margin: 16px 0 8px;
+  color: #34495e;
 }
 
-/* Основной контент */
-#main-content {
-  margin-top: 20px;
+p {
+  margin-bottom: 16px;
   text-align: center;
   color: #555;
 }
 
-/* --- Новая нижняя панель навигации --- */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  padding: 8px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 0 auto;
+/* Кнопки главного меню */
+.menu-btn {
+  display: block;
   width: 100%;
-  border-radius: 12px 12px 0 0;
-}
-
-.nav-btn {
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
+  padding: 14px;
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: 600;
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 4px;
+  background: #2980b9;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.nav-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.menu-btn:hover {
+  background: #1c6ea4;
 }
 
-.nav-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary { background: linear-gradient(to bottom, #3498db, #2980b9); }
-.btn-secondary { background: linear-gradient(to bottom, #9b59b6, #8e44ad); }
-.btn-accent { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
-.btn-info { background: linear-gradient(to bottom, #2ecc71, #27ae60); }
-.btn-feedback { background: linear-gradient(to bottom, #f39c12, #d35400); }
-
-/* --- Стили для подменю Arc Raiders (голубые) --- */
+/* Подменю (Arc Raiders, Стримерам и т.д.) */
 .submenu-btn {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 16px;
+  color: white;
+  background: #3498db;
   border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(to bottom, #3498db, #2980b9);
-  width: 100%;
-  margin: 8px 0;
+  transition: background 0.2s;
 }
 
 .submenu-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #2980b9;
 }
 
-.submenu-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Кнопка "Назад" */
+.back-btn {
+  background: #7f8c8d !important;
 }
 
-/* --- Стили для формы стримеров --- */
-#streamer-form {
-  width: 100%;
+.back-btn:hover {
+  background: #6c7a89 !important;
+}
+
+/* Фильтры */
+.filters {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 10px;
+  margin: 16px 0;
+  flex-wrap: wrap;
 }
 
-#streamer-form label {
-  font-weight: bold;
-  color: #2c3e50;
-  text-align: left;
+.filters select {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  color: #333;
 }
 
-#streamer-form input {
+/* Карточки событий */
+.event-card {
+  display: flex;
+  align-items: center;
   padding: 12px;
-  border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 1rem;
+  margin-bottom: 10px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: transform 0.1s;
 }
 
-#streamer-form input:focus {
-  outline: none;
-  border-color: #3498db;
+.event-card:hover {
+  transform: translateY(-1px);
+}
+
+.event-card.active {
+  border-left: 4px solid #27ae60;
+  background: #f8faf7;
+}
+
+.event-card.upcoming {
+  border-left: 4px solid #e67e22;
+  background: #fffaf5;
+}
+
+.event-icon {
+  font-size: 24px;
+  width: 36px;
+  text-align: center;
+  margin-right: 12px;
+}
+
+.event-info {
+  flex: 1;
+}
+
+.event-name {
+  font-weight: bold;
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.event-location {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+
+.event-time {
+  font-size: 14px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.event-time .time {
+  font-weight: bold;
+  color: #c0392b;
+}
+
+/* Сообщения "нет событий" */
+.no-events {
+  padding: 12px;
+  color: #95a5a6;
+  font-style: italic;
+  text-align: center;
+  background: #f9f9f9;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+/* Адаптация под мобильные */
+@media (max-width: 480px) {
+  .filters {
+    flex-direction: column;
+  }
+  
+  .filters select {
+    min-width: auto;
+  }
+  
+  .event-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .event-icon {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
 }
