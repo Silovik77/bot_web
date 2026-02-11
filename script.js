@@ -3,8 +3,6 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Глобальные переменные ---
 let allEvents = [];
-let filteredActive = [];
-let filteredUpcoming = [];
 
 // --- Вспомогательные функции ---
 function formatTimeMs(ms) {
@@ -55,131 +53,141 @@ async function loadEvents() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     allEvents = data.data || [];
-    applyFilters();
   } catch (e) {
     console.error("Ошибка загрузки событий:", e);
-    alert("Не удалось загрузить события. Проверьте соединение.");
+    alert("Не удалось загрузить события.");
   }
-}
-
-// --- Фильтрация ---
-function applyFilters() {
-  const mapFilter = document.getElementById('filter-map')?.value || '';
-  const eventFilter = document.getElementById('filter-event')?.value || '';
-
-  filteredActive = allEvents.filter(event => {
-    const isActive = event.startTime <= Date.now() && Date.now() < event.endTime;
-    const matchesMap = !mapFilter || event.map === mapFilter;
-    const matchesEvent = !eventFilter || event.name === eventFilter;
-    return isActive && matchesMap && matchesEvent;
-  });
-
-  filteredUpcoming = allEvents.filter(event => {
-    const isUpcoming = Date.now() < event.startTime;
-    const matchesMap = !mapFilter || event.map === mapFilter;
-    const matchesEvent = !eventFilter || event.name === eventFilter;
-    return isUpcoming && matchesMap && matchesEvent;
-  }).slice(0, 10); // Максимум 10 предстоящих
-
-  renderEvents();
 }
 
 // --- Отображение событий ---
-function renderEvents() {
-  const activeEl = document.getElementById('active-events');
-  const upcomingEl = document.getElementById('upcoming-events');
+function showEvents() {
+  // Фильтрация
+  const currentTimestamp = Date.now();
+  const activeEvents = allEvents.filter(e => 
+    e.startTime <= currentTimestamp && currentTimestamp < e.endTime
+  );
+  const upcomingEvents = allEvents.filter(e => 
+    currentTimestamp < e.startTime
+  ).slice(0, 10); // Максимум 10
 
-  if (!activeEl || !upcomingEl) return;
+  const mainContent = document.getElementById('main-content');
+  let html = '<h2>📅 События ARC Raiders</h2>';
 
-  // Активные
-  activeEl.innerHTML = filteredActive.length > 0
-    ? filteredActive.map(e => `
-        <div class="event-card active">
-          <div class="event-icon">${getEventIcon(e.name)}</div>
-          <div class="event-info">
-            <div class="event-name">${e.name}</div>
-            <div class="event-location">${getMapIcon(e.map)} ${e.map}</div>
-          </div>
-          <div class="event-time">Осталось: <span class="time">${formatTimeMs(e.endTime - Date.now())}</span></div>
-        </div>
-      `).join('')
-    : '<div class="no-events">Нет активных событий</div>';
-
-  // Предстоящие
-  upcomingEl.innerHTML = filteredUpcoming.length > 0
-    ? filteredUpcoming.map(e => `
-        <div class="event-card upcoming">
-          <div class="event-icon">${getEventIcon(e.name)}</div>
-          <div class="event-info">
-            <div class="event-name">${e.name}</div>
-            <div class="event-location">${getMapIcon(e.map)} ${e.map}</div>
-          </div>
-          <div class="event-time">Через: <span class="time">${formatTimeMs(e.startTime - Date.now())}</span></div>
-        </div>
-      `).join('')
-    : '<div class="no-events">Нет предстоящих событий</div>';
-}
-
-// --- Инициализация фильтров ---
-function initFilters() {
+  // Фильтры
   const maps = [...new Set(allEvents.map(e => e.map))].sort();
   const events = [...new Set(allEvents.map(e => e.name))].sort();
 
-  const mapSelect = document.getElementById('filter-map');
-  const eventSelect = document.getElementById('filter-event');
+  html += `
+    <div class="filters">
+      <select id="filter-map">
+        <option value="">Все карты</option>
+        ${maps.map(m => `<option value="${m}">${m}</option>`).join('')}
+      </select>
+      <select id="filter-event">
+        <option value="">Все события</option>
+        ${events.map(n => `<option value="${n}">${n}</option>`).join('')}
+      </select>
+    </div>
+  `;
 
-  if (mapSelect) {
-    mapSelect.innerHTML = `<option value="">Все карты</option>` + 
-      maps.map(m => `<option value="${m}">${m}</option>`).join('');
-  }
-  if (eventSelect) {
-    eventSelect.innerHTML = `<option value="">Все события</option>` + 
-      events.map(n => `<option value="${n}">${n}</option>`).join('');
+  // Активные
+  html += '<h3>🟢 Активные</h3>';
+  if (activeEvents.length > 0) {
+    html += activeEvents.map(e => `
+      <div class="event-card active">
+        <div class="event-icon">${getEventIcon(e.name)}</div>
+        <div class="event-info">
+          <div class="event-name">${e.name}</div>
+          <div class="event-location">${getMapIcon(e.map)} ${e.map}</div>
+        </div>
+        <div class="event-time">Осталось: <span class="time">${formatTimeMs(e.endTime - Date.now())}</span></div>
+      </div>
+    `).join('');
+  } else {
+    html += '<div class="no-events">Нет активных событий</div>';
   }
 
-  mapSelect?.addEventListener('change', applyFilters);
-  eventSelect?.addEventListener('change', applyFilters);
+  // Предстоящие
+  html += '<h3>🔴 Предстоящие</h3>';
+  if (upcomingEvents.length > 0) {
+    html += upcomingEvents.map(e => `
+      <div class="event-card upcoming">
+        <div class="event-icon">${getEventIcon(e.name)}</div>
+        <div class="event-info">
+          <div class="event-name">${e.name}</div>
+          <div class="event-location">${getMapIcon(e.map)} ${e.map}</div>
+        </div>
+        <div class="event-time">Через: <span class="time">${formatTimeMs(e.startTime - Date.now())}</span></div>
+      </div>
+    `).join('');
+  } else {
+    html += '<div class="no-events">Нет предстоящих событий</div>';
+  }
+
+  html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+  mainContent.innerHTML = html;
+
+  // Добавляем обработчики фильтров
+  document.getElementById('filter-map')?.addEventListener('change', applyFilters);
+  document.getElementById('filter-event')?.addEventListener('change', applyFilters);
 }
 
-// --- Отображение меню Arc Raiders (как у вас было) ---
+// --- Применение фильтров ---
+function applyFilters() {
+  const mapFilter = document.getElementById('filter-map').value;
+  const eventFilter = document.getElementById('filter-event').value;
+  const currentTimestamp = Date.now();
+
+  const activeFiltered = allEvents.filter(e => 
+    e.startTime <= currentTimestamp && currentTimestamp < e.endTime &&
+    (!mapFilter || e.map === mapFilter) &&
+    (!eventFilter || e.name === eventFilter)
+  );
+
+  const upcomingFiltered = allEvents.filter(e => 
+    currentTimestamp < e.startTime &&
+    (!mapFilter || e.map === mapFilter) &&
+    (!eventFilter || e.name === eventFilter)
+  ).slice(0, 10);
+
+  // Обновляем только списки событий
+  const activeEl = document.querySelector('#main-content h3:nth-of-type(1) + div.events-list, #main-content .no-events:first-of-type ~ div, #main-content h3:nth-of-type(1) + .no-events');
+  const upcomingEl = document.querySelector('#main-content h3:nth-of-type(2) + div.events-list, #main-content .no-events:last-of-type');
+
+  // Лучше перерисовать полностью (для простоты)
+  showEvents();
+}
+
+// --- Меню Arc Raiders ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-
-    <!-- Фильтры -->
-    <div class="filters">
-      <select id="filter-map">
-        <option value="">Все карты</option>
-      </select>
-      <select id="filter-event">
-        <option value="">Все события</option>
-      </select>
-    </div>
-
-    <!-- Активные события -->
-    <h3>🟢 Активные</h3>
-    <div id="active-events" class="events-list"></div>
-
-    <!-- Предстоящие события -->
-    <h3>🔴 Предстоящие</h3>
-    <div id="upcoming-events" class="events-list"></div>
-
-    <!-- Подменю -->
-    <div class="arc-menu">
-      <button class="submenu-btn" onclick="showEvents()">События</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Обновления» в разработке.')">Обновления</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Гайды» в разработке.')">Гайды</button>
-      <button class="submenu-btn" onclick="alert('Раздел «Испытание» в разработке.')">Испытание</button>
-      <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
-    </div>
+    <button class="submenu-btn" onclick="showEventsPage()">События</button>
+    <button class="submenu-btn" onclick="alert('Раздел «Испытание» в разработке.')">Испытание</button>
+    <button class="submenu-btn" onclick="alert('Раздел «Обновления» в разработке.')">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел «Гайды» в разработке.')">Гайды</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
-  
-  initFilters();
-  loadEvents();
+  loadEvents(); // Загружаем события в фоне
 }
 
-// --- Отображение формы для стримеров ---
+// --- Вспомогательная функция для отображения событий ---
+function showEventsPage() {
+  showEvents();
+}
+
+// --- Главное меню ---
+function showMainMenu() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+    <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+  `;
+}
+
+// --- Форма для стримеров ---
 function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
@@ -221,18 +229,6 @@ function showStreamersForm() {
       alert('❌ Не удалось подключиться к серверу.');
     }
   });
-}
-
-// --- Главное меню ---
-function showMainMenu() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-    <div class="main-menu">
-      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
-    </div>
-  `;
 }
 
 // --- Инициализация ---
