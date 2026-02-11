@@ -168,7 +168,6 @@ async function showEvents() {
       const bSec = parseTimeStr(b.time_left);
       return aSec - bSec;
     });
-    // upcomingEvents = upcomingEvents.slice(0, 10); // Убрали лимит
 
     // 🎯 Получаем уникальные значения для фильтров
     const allEventsCombined = [...activeEvents, ...upcomingEvents];
