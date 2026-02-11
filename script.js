@@ -1,4 +1,4 @@
-// --- Укажите ваш реальный URL Amvera ---
+// Укажите ваш реальный URL
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Функция для загрузки событий ---
