@@ -8,24 +8,156 @@ async function loadEvents() {
     if (!response.ok) {
       throw new Error(`Ошибка сервера: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    const rawData = await response.json(); // Получаем RAW ответ
+    // Парсим как в app.py
+    const events = rawData.data || [];
+    return events;
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     throw error;
   }
 }
 
-// --- Отображение меню Arc Raiders ---
+// --- Отображение меню Arc Raiders (как в рабочем варианте) ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
+    <!-- Фильтры -->
+    <div class="filters">
+      <select id="filter-map">
+        <option value="">Все карты</option>
+      </select>
+      <select id="filter-event">
+        <option value="">Все события</option>
+      </select>
+    </div>
+
+    <!-- Активные события -->
+    <h3>🟢 Активные</h3>
+    <div id="active-events" class="events-list"></div>
+
+    <!-- Предстоящие события -->
+    <h3>🔴 Предстоящие</h3>
+    <div id="upcoming-events" class="events-list"></div>
+
+    <!-- Подменю (как в рабочем варианте) -->
     <button class="submenu-btn" onclick="showEvents()">События</button>
     <button class="submenu-btn" onclick="alert('Раздел \\'Обновления\\' в разработке.')">Обновления</button>
     <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
+  // Загружаем и отображаем события
+  loadAndDisplayEvents();
+  // Инициализируем фильтры
+  initializeFilters();
+}
+
+// --- Загрузка и отображение событий ---
+async function loadAndDisplayEvents() {
+  try {
+    const events = await loadEvents();
+    const currentTimestamp = Date.now(); // в миллисекундах
+
+    const activeEvents = [];
+    const upcomingEvents = [];
+
+    for (const event of events) {
+      const name = event.name || 'Неизвестное событие';
+      const location = event.map || 'Неизвестная карта';
+      const start = event.startTime;
+      const end = event.endTime;
+
+      if (!start || !end) continue;
+
+      if (start <= currentTimestamp && currentTimestamp < end) {
+        // Активное событие
+        const timeLeftMs = end - currentTimestamp;
+        const timeLeftStr = formatTimeMs(timeLeftMs);
+        activeEvents.push({ name, location, time_left: timeLeftStr });
+      } else if (currentTimestamp < start) {
+        // Предстоящее (ограничиваем 10)
+        const timeToStartMs = start - currentTimestamp;
+        const timeToStartStr = formatTimeMs(timeToStartMs);
+        upcomingEvents.push({ name, location, time_left: timeToStartStr });
+      }
+    }
+
+    // Сортируем предстоящие по времени начала
+    upcomingEvents.sort((a, b) => {
+      const aSec = parseTimeStr(a.time_left);
+      const bSec = parseTimeStr(b.time_left);
+      return aSec - bSec;
+    });
+
+    // Обновляем списки
+    updateEventList('active-events', activeEvents, 'active');
+    updateEventList('upcoming-events', upcomingEvents.slice(0, 10), 'upcoming'); // Максимум 10
+
+  } catch (error) {
+    console.error('Ошибка при загрузке событий:', error);
+    const activeEl = document.getElementById('active-events');
+    const upcomingEl = document.getElementById('upcoming-events');
+    if (activeEl) activeEl.innerHTML = '<p class="no-data">Ошибка загрузки активных событий</p>';
+    if (upcomingEl) upcomingEl.innerHTML = '<p class="no-data">Ошибка загрузки предстоящих событий</p>';
+  }
+}
+
+// --- Вспомогательная функция для отрисовки списка ---
+function updateEventList(containerId, events, type) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  if (events.length > 0) {
+    container.innerHTML = events.map(e => `
+      <div class="event-card ${type}">
+        <div class="event-icon">${getEventIcon(e.name)}</div>
+        <div class="event-info">
+          <div class="event-name">${e.name}</div>
+          <div class="event-location">${getMapIcon(e.location)} ${e.location}</div>
+        </div>
+        <div class="event-time">⏱️ ${
+          type === 'active' ? `Осталось: ${e.time_left}` : `Через: ${e.time_left}`
+        }</div>
+      </div>
+    `).join('');
+  } else {
+    container.innerHTML = `<p class="no-data">${
+      type === 'active' ? '🟢 Нет активных событий' : '🔴 Нет предстоящих событий'
+    }</p>`;
+  }
+}
+
+// --- Инициализация фильтров ---
+function initializeFilters() {
+  // Получаем все события для фильтров
+  loadEvents().then(events => {
+    const maps = [...new Set(events.map(e => e.map))].sort();
+    const names = [...new Set(events.map(e => e.name))].sort();
+
+    const mapSelect = document.getElementById('filter-map');
+    const eventSelect = document.getElementById('filter-event');
+
+    if (mapSelect) {
+      mapSelect.innerHTML = `<option value="">Все карты</option>` + 
+        maps.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+    if (eventSelect) {
+      eventSelect.innerHTML = `<option value="">Все события</option>` + 
+        names.map(n => `<option value="${n}">${n}</option>`).join('');
+    }
+
+    // Добавляем обработчики
+    mapSelect?.addEventListener('change', applyFilters);
+    eventSelect?.addEventListener('change', applyFilters);
+  });
+}
+
+// --- Применение фильтров (простое обновление) ---
+function applyFilters() {
+    // Перезагружаем события
+    loadAndDisplayEvents();
 }
 
 // --- Вспомогательные функции ---
@@ -55,14 +187,64 @@ function parseTimeStr(str) {
   return total;
 }
 
-// --- Отображение событий ---
-async function showEvents() {
-  try {
-    const rawData = await loadEvents();
-    
-    // Парсим сырые данные из API MetaForge
-    const events = rawData.data || [];
-    const currentTimestamp = Date.now(); // в миллисекундах
+function getMapIcon(map) {
+  const icons = {
+    "Dam": "💧",
+    "Buried City": "🏙️",
+    "Spaceport": "🚀",
+    "Blue Gate": "🔵",
+    "Stella Montis": "⛰️"
+  };
+  return icons[map] || "📍";
+}
+
+function getEventIcon(name) {
+  const icons = {
+    "Night Raid": "🌙",
+    "Harvester": "🪴",
+    "Matriarch": "👑",
+    "Cold Snap": "❄️",
+    "Electromagnetic Storm": "⚡",
+    "Launch Tower Loot": "🎯",
+    "Hidden Bunker": "🔒",
+    "Husk Graveyard": "💀",
+    "Prospecting Probes": "📡",
+    "Uncovered Caches": "📦",
+    "Lush Blooms": "🌿",
+    "Locked Gate": "🚪"
+  };
+  return icons[name] || "❓";
+}
+
+// --- Отображение страницы событий (для кнопки "События") ---
+function showEvents() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <h2>📅 События ARC Raiders</h2>
+    <!-- Фильтры -->
+    <div class="filters">
+      <select id="filter-map-single">
+        <option value="">Все карты</option>
+      </select>
+      <select id="filter-event-single">
+        <option value="">Все события</option>
+      </select>
+    </div>
+
+    <!-- Активные события -->
+    <h3>🟢 Активные</h3>
+    <div id="active-events-single" class="events-list"></div>
+
+    <!-- Предстоящие события -->
+    <h3>🔴 Предстоящие</h3>
+    <div id="upcoming-events-single" class="events-list"></div>
+
+    <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+  `;
+
+  // Загружаем и отображаем события
+  loadEvents().then(events => {
+    const currentTimestamp = Date.now();
 
     const activeEvents = [];
     const upcomingEvents = [];
@@ -76,56 +258,53 @@ async function showEvents() {
       if (!start || !end) continue;
 
       if (start <= currentTimestamp && currentTimestamp < end) {
-        // Активное событие
         const timeLeftMs = end - currentTimestamp;
         const timeLeftStr = formatTimeMs(timeLeftMs);
         activeEvents.push({ name, location, time_left: timeLeftStr });
       } else if (currentTimestamp < start) {
-        // Предстоящее
         const timeToStartMs = start - currentTimestamp;
         const timeToStartStr = formatTimeMs(timeToStartMs);
         upcomingEvents.push({ name, location, time_left: timeToStartStr });
       }
     }
 
-    // Сортируем предстоящие по времени начала
     upcomingEvents.sort((a, b) => {
       const aSec = parseTimeStr(a.time_left);
       const bSec = parseTimeStr(b.time_left);
       return aSec - bSec;
     });
 
-    const mainContent = document.getElementById('main-content');
-    let html = '<h2>📅 События ARC Raiders</h2>';
+    updateEventList('active-events-single', activeEvents, 'active');
+    updateEventList('upcoming-events-single', upcomingEvents.slice(0, 10), 'upcoming');
 
-    // Активные
-    if (activeEvents.length > 0) {
-      html += '<h3>🟢 Активные</h3>';
-      activeEvents.forEach(e => {
-        html += `<div class="event-item active"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Осталось: ${e.time_left}</span></div>`;
-      });
-    } else {
-      html += '<p class="no-data">🟢 Нет активных событий</p>';
+    // Инициализируем фильтры для этой страницы
+    const maps = [...new Set(events.map(e => e.map))].sort();
+    const names = [...new Set(events.map(e => e.name))].sort();
+
+    const mapSelect = document.getElementById('filter-map-single');
+    const eventSelect = document.getElementById('filter-event-single');
+
+    if (mapSelect) {
+      mapSelect.innerHTML = `<option value="">Все карты</option>` + 
+        maps.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+    if (eventSelect) {
+      eventSelect.innerHTML = `<option value="">Все события</option>` + 
+        names.map(n => `<option value="${n}">${n}</option>`).join('');
     }
 
-    // Предстоящие
-    if (upcomingEvents.length > 0) {
-      html += '<h3>🔴 Предстоящие</h3>';
-      upcomingEvents.forEach(e => {
-        html += `<div class="event-item upcoming"><span class="event-name">${e.name}</span><span class="event-location">${e.location}</span><span class="event-time-left">⏱️ Начнётся через: ${e.time_left}</span></div>`;
-      });
-    } else {
-      html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
-    }
+    mapSelect?.addEventListener('change', () => applyFiltersOnPage('active-events-single', 'upcoming-events-single'));
+    eventSelect?.addEventListener('change', () => applyFiltersOnPage('active-events-single', 'upcoming-events-single'));
+  });
+}
 
-    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
-    mainContent.innerHTML = html;
+// --- Функция для фильтрации на странице событий ---
+function applyFiltersOnPage(activeContainerId, upcomingContainerId) {
+  const mapFilter = document.getElementById('filter-map-single').value;
+  const eventFilter = document.getElementById('filter-event-single').value;
 
-  } catch (error) {
-    console.error('Ошибка при загрузке событий:', error);
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
-  }
+  // Перезагружаем и фильтруем на лету (упрощённо — перерисовываем showEvents)
+  showEvents();
 }
 
 // --- Отображение формы для стримеров ---
@@ -146,7 +325,6 @@ function showStreamersForm() {
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 
-  // Обработчик отправки формы
   document.getElementById('streamer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const channelId = document.getElementById('channel-id').value;
@@ -155,9 +333,7 @@ function showStreamersForm() {
     try {
       const response = await fetch(`${API_URL}/api/register_streamer`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ channel_id: channelId, twitch_url: twitchUrl })
       });
 
@@ -178,7 +354,13 @@ function showStreamersForm() {
 // --- Отображение главного меню ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = '<p>Добро пожаловать! Выберите раздел в меню ниже.</p>';
+  mainContent.innerHTML = `
+    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <div class="main-menu">
+      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+    </div>
+  `;
 }
 
 // --- Инициализация ---
