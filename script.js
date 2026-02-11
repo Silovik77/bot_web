@@ -72,14 +72,16 @@ function getEventIcon(name) {
   return icons[name] || "❓";
 }
 
-// --- Отображение главного меню (как было раньше) ---
+// --- Отображение главного меню (с полным набором кнопок) ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
       <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+      <button class="menu-btn" onclick="alert('Клан NE — в разработке')">Клан NE</button>
+      <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
+      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
     </div>
   `;
 }
@@ -95,6 +97,29 @@ function showArcRaidersMenu() {
     <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
+}
+
+// --- Функция применения фильтров
+function applyFilters() {
+  const mapFilter = document.getElementById('filter-map').value;
+  const eventFilter = document.getElementById('filter-event').value;
+
+  // Получаем все элементы событий
+  const allEventCards = document.querySelectorAll('.event-card');
+
+  allEventCards.forEach(card => {
+    const eventName = card.querySelector('.event-name').textContent;
+    const eventLocation = card.querySelector('.event-location').textContent.trim().split(' ')[1]; // Получаем название карты
+
+    const matchesMap = !mapFilter || eventLocation === mapFilter;
+    const matchesEvent = !eventFilter || eventName === eventFilter;
+
+    if (matchesMap && matchesEvent) {
+      card.style.display = 'flex'; // Показываем
+    } else {
+      card.style.display = 'none'; // Скрываем
+    }
+  });
 }
 
 // --- Отображение событий (отдельная страница) ---
@@ -144,6 +169,11 @@ async function showEvents() {
     });
     upcomingEvents = upcomingEvents.slice(0, 10);
 
+    // 🎯 Получаем уникальные значения для фильтров
+    const allEventsCombined = [...activeEvents, ...upcomingEvents];
+    const uniqueMaps = [...new Set(allEventsCombined.map(e => e.location))].sort();
+    const uniqueEvents = [...new Set(allEventsCombined.map(e => e.name))].sort();
+
     const mainContent = document.getElementById('main-content');
     let html = '<h2>📅 События ARC Raiders</h2>';
 
@@ -152,9 +182,11 @@ async function showEvents() {
       <div class="filters">
         <select id="filter-map">
           <option value="">Все карты</option>
+          ${uniqueMaps.map(m => `<option value="${m}">${m}</option>`).join('')}
         </select>
         <select id="filter-event">
           <option value="">Все события</option>
+          ${uniqueEvents.map(n => `<option value="${n}">${n}</option>`).join('')}
         </select>
       </div>
     `;
@@ -181,6 +213,10 @@ async function showEvents() {
 
     html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
+
+    // 🎯 Добавляем обработчики для фильтров
+    document.getElementById('filter-map')?.addEventListener('change', applyFilters);
+    document.getElementById('filter-event')?.addEventListener('change', applyFilters);
 
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
