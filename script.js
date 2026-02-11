@@ -79,6 +79,7 @@ function showMainMenu() {
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
       <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
       <button class="menu-btn" onclick="alert('Клан NE — в разработке')">Клан NE</button>
       <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
       <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
@@ -273,3 +274,4 @@ function showStreamersForm() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
