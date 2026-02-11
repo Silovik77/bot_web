@@ -84,7 +84,7 @@ function applyFilters() {
   renderEvents();
 }
 
-// --- Отображение ---
+// --- Отображение событий ---
 function renderEvents() {
   const activeEl = document.getElementById('active-events');
   const upcomingEl = document.getElementById('upcoming-events');
@@ -122,7 +122,6 @@ function renderEvents() {
 
 // --- Инициализация фильтров ---
 function initFilters() {
-  // Получаем уникальные карты и события
   const maps = [...new Set(allEvents.map(e => e.map))].sort();
   const events = [...new Set(allEvents.map(e => e.name))].sort();
 
@@ -138,16 +137,15 @@ function initFilters() {
       events.map(n => `<option value="${n}">${n}</option>`).join('');
   }
 
-  // Добавляем обработчики
   mapSelect?.addEventListener('change', applyFilters);
   eventSelect?.addEventListener('change', applyFilters);
 }
 
-// --- Отображение главного меню с фильтрами ---
+// --- Отображение меню Arc Raiders (как у вас было) ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <h2>🎮 ARC Raiders</h2>
+    <h2>🎮 Arc Raiders</h2>
 
     <!-- Фильтры -->
     <div class="filters">
@@ -167,7 +165,14 @@ function showArcRaidersMenu() {
     <h3>🔴 Предстоящие</h3>
     <div id="upcoming-events" class="events-list"></div>
 
-    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+    <!-- Подменю -->
+    <div class="arc-menu">
+      <button class="submenu-btn" onclick="showEvents()">События</button>
+      <button class="submenu-btn" onclick="alert('Раздел «Обновления» в разработке.')">Обновления</button>
+      <button class="submenu-btn" onclick="alert('Раздел «Гайды» в разработке.')">Гайды</button>
+      <button class="submenu-btn" onclick="alert('Раздел «Испытание» в разработке.')">Испытание</button>
+      <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+    </div>
   `;
   
   initFilters();
@@ -223,7 +228,7 @@ function showMainMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-    <div class="menu-buttons">
+    <div class="main-menu">
       <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
       <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
     </div>
@@ -232,102 +237,5 @@ function showMainMenu() {
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
-  // Добавляем стили динамически
-  const style = document.createElement('style');
-  style.textContent = `
-    .filters {
-      display: flex; gap: 12px; margin-bottom: 16px;
-    }
-    .filters select {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #f9f9f9;
-    }
-    .events-list {
-      margin-top: 8px;
-    }
-    .event-card {
-      display: flex;
-      align-items: center;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .event-card.active {
-      border-left: 4px solid #4CAF50;
-      background: #f8faf7;
-    }
-    .event-card.upcoming {
-      border-left: 4px solid #FF9800;
-      background: #fff8e1;
-    }
-    .event-icon {
-      font-size: 24px;
-      margin-right: 12px;
-      width: 32px;
-      text-align: center;
-    }
-    .event-info {
-      flex: 1;
-    }
-    .event-name {
-      font-weight: bold;
-      color: #333;
-    }
-    .event-location {
-      font-size: 14px;
-      color: #666;
-    }
-    .event-time {
-      font-size: 14px;
-      color: #555;
-    }
-    .time {
-      font-weight: bold;
-      color: #d32f2f;
-    }
-    .no-events {
-      color: #999;
-      font-style: italic;
-      padding: 12px;
-    }
-    .menu-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .menu-btn {
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: #e0e0e0;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .menu-btn:hover {
-      background: #cccccc;
-    }
-    .submenu-btn {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .back-btn {
-      background: #6c757d;
-    }
-  `;
-  document.head.appendChild(style);
-
   showMainMenu();
 });
