@@ -134,3 +134,4 @@ function showMainMenu() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
