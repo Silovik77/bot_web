@@ -1,6 +1,31 @@
 // Укажите ваш реальный URL Amvera (без пробелов!)
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
+// --- Словари перевода ---
+const MAP_TRANSLATIONS = {
+    "Dam": "Плотина",
+    "Buried City": "Закопанный город",
+    "Spaceport": "Космопорт",
+    "Blue Gate": "Синие врата",
+    "Stella Montis": "Стелла Монтис"
+};
+
+const EVENT_TRANSLATIONS = {
+    "Night Raid": "Ночной налёт",
+    "Harvester": "Жнец",
+    "Matriarch": "Матриарх",
+    "Cold Snap": "Холодная волна",
+    "Electromagnetic Storm": "Электромагнитная буря",
+    "Launch Tower Loot": "Добыча с пусковой башни",
+    "Hidden Bunker": "Скрытый бункер",
+    "Husk Graveyard": "Кладбище Хасков",
+    "Prospecting Probes": "Геологические зонды",
+    "Uncovered Caches": "Обнаруженные тайники",
+    "Lush Blooms": "Пышные цветения",
+    "Locked Gate": "Закрытые врата",
+    "Bird City": "Птичий город"
+};
+
 // --- Функция для загрузки событий ---
 async function loadEvents() {
   try {
@@ -67,12 +92,13 @@ function getEventIcon(name) {
     "Prospecting Probes": "📡",
     "Uncovered Caches": "📦",
     "Lush Blooms": "🌿",
-    "Locked Gate": "🚪"
+    "Locked Gate": "🚪",
+    "Bird City": "🐦"
   };
   return icons[name] || "❓";
 }
 
-// --- Функция применения фильтров
+// --- Функция применения фильтров ---
 function applyFilters() {
   const mapFilter = document.getElementById('filter-map').value;
   const eventFilter = document.getElementById('filter-event').value;
@@ -81,11 +107,21 @@ function applyFilters() {
   const allEventCards = document.querySelectorAll('.event-card');
 
   allEventCards.forEach(card => {
-    const eventName = card.querySelector('.event-name').textContent;
-    const eventLocation = card.querySelector('.event-location').textContent.trim().split(' ')[1]; // Получаем название карты
+    const eventName = card.querySelector('.event-name').textContent.trim();
+    // ✅ ИСПРАВЛЕНО: Извлечение названия карты без эмодзи
+    const fullLocationText = card.querySelector('.event-location').textContent.trim();
+    // Разбиваем по пробелам и берём всё, кроме первого элемента (предполагаем, что это эмодзи)
+    const locationParts = fullLocationText.split(' ');
+    // Объединяем оставшиеся части, чтобы получить оригинальное название карты
+    const originalLocation = locationParts.slice(1).join(' ');
 
-    const matchesMap = !mapFilter || eventLocation === mapFilter;
-    const matchesEvent = !eventFilter || eventName === eventFilter;
+    // Переводим названия для сравнения
+    const translatedLocation = MAP_TRANSLATIONS[originalLocation] || originalLocation;
+    const translatedEventName = EVENT_TRANSLATIONS[eventName] || eventName;
+
+    // Сравниваем с переведёнными названиями
+    const matchesMap = !mapFilter || translatedLocation === mapFilter;
+    const matchesEvent = !eventFilter || translatedEventName === eventFilter;
 
     if (matchesMap && matchesEvent) {
       card.style.display = 'flex'; // Показываем
@@ -98,7 +134,6 @@ function applyFilters() {
 // --- Отображение главного меню (с полным набором кнопок) ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
-  // ✅ ИСПРАВЛЕНО: inner HTML -> innerHTML
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
@@ -114,7 +149,6 @@ function showMainMenu() {
 // --- Отображение меню Arc Raiders (только подменю, без событий) ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
-  // ✅ ИСПРАВЛЕНО: inner HTML -> innerHTML
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
     <button class="submenu-btn" onclick="showEvents()">События</button>
@@ -144,7 +178,6 @@ async function showEvents() {
 
       for (const event of events) {
         const name = event.name || 'Неизвестное событие';
-        // ✅ ИСПРАВЛЕНО: loc ation -> location
         const location = event.map || 'Неизвестная карта';
         const start = event.startTime;
         const end = event.endTime;
@@ -158,7 +191,6 @@ async function showEvents() {
         } else if (currentTimestamp < start) {
           const timeToStartMs = start - currentTimestamp;
           const timeToStartStr = formatTimeMs(timeToStartMs);
-          // ✅ ИСПРАВЛЕНО: ti meToStartStr -> timeToStartStr
           upcomingEvents.push({ name, location, time_left: timeToStartStr });
         }
       }
@@ -175,8 +207,13 @@ async function showEvents() {
 
     // 🎯 Получаем уникальные значения для фильтров
     const allEventsCombined = [...activeEvents, ...upcomingEvents];
-    const uniqueMaps = [...new Set(allEventsCombined.map(e => e.location))].sort();
-    const uniqueEvents = [...new Set(allEventsCombined.map(e => e.name))].sort();
+    // Используем оригинальные названия для получения уникальных значений
+    const uniqueOriginalMaps = [...new Set(allEventsCombined.map(e => e.location))].sort();
+    const uniqueOriginalEvents = [...new Set(allEventsCombined.map(e => e.name))].sort();
+
+    // Переводим уникальные названия для отображения в выпадающих списках
+    const uniqueTranslatedMaps = uniqueOriginalMaps.map(original => MAP_TRANSLATIONS[original] || original);
+    const uniqueTranslatedEvents = uniqueOriginalEvents.map(original => EVENT_TRANSLATIONS[original] || original);
 
     const mainContent = document.getElementById('main-content');
     let html = '<h2>📅 События ARC Raiders</h2>';
@@ -186,11 +223,11 @@ async function showEvents() {
       <div class="filters">
         <select id="filter-map">
           <option value="">Все карты</option>
-          ${uniqueMaps.map(m => `<option value="${m}">${m}</option>`).join('')}
+          ${uniqueTranslatedMaps.map(m => `<option value="${m}">${m}</option>`).join('')}
         </select>
         <select id="filter-event">
           <option value="">Все события</option>
-          ${uniqueEvents.map(n => `<option value="${n}">${n}</option>`).join('')}
+          ${uniqueTranslatedEvents.map(n => `<option value="${n}">${n}</option>`).join('')}
         </select>
       </div>
     `;
@@ -199,7 +236,10 @@ async function showEvents() {
     if (activeEvents.length > 0) {
       html += '<h3>🟢 Активные</h3>';
       activeEvents.forEach(e => {
-        html += `<div class="event-card active"><div class="event-icon">${getEventIcon(e.name)}</div><div class="event-info"><div class="event-name">${e.name}</div><div class="event-location">${getMapIcon(e.location)} ${e.location}</div></div><div class="event-time">⏱️ Осталось: ${e.time_left}</div></div>`;
+        // Переводим название события и карты для отображения
+        const displayName = EVENT_TRANSLATIONS[e.name] || e.name;
+        const displayLocation = MAP_TRANSLATIONS[e.location] || e.location;
+        html += `<div class="event-card active"><div class="event-icon">${getEventIcon(e.name)}</div><div class="event-info"><div class="event-name">${displayName}</div><div class="event-location">${getMapIcon(e.location)} ${displayLocation}</div></div><div class="event-time">⏱️ Осталось: ${e.time_left}</div></div>`;
       });
     } else {
       html += '<p class="no-data">🟢 Нет активных событий</p>';
@@ -209,7 +249,10 @@ async function showEvents() {
     if (upcomingEvents.length > 0) {
       html += '<h3>🔴 Предстоящие</h3>';
       upcomingEvents.forEach(e => {
-        html += `<div class="event-card upcoming"><div class="event-icon">${getEventIcon(e.name)}</div><div class="event-info"><div class="event-name">${e.name}</div><div class="event-location">${getMapIcon(e.location)} ${e.location}</div></div><div class="event-time">⏱️ Начнётся через: ${e.time_left}</div></div>`;
+        // Переводим название события и карты для отображения
+        const displayName = EVENT_TRANSLATIONS[e.name] || e.name;
+        const displayLocation = MAP_TRANSLATIONS[e.location] || e.location;
+        html += `<div class="event-card upcoming"><div class="event-icon">${getEventIcon(e.name)}</div><div class="event-info"><div class="event-name">${displayName}</div><div class="event-location">${getMapIcon(e.location)} ${displayLocation}</div></div><div class="event-time">⏱️ Начнётся через: ${e.time_left}</div></div>`;
       });
     } else {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
@@ -232,7 +275,6 @@ async function showEvents() {
 // --- Отображение формы для стримеров ---
 function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
-  // ✅ ИСПРАВЛЕНО: добавлена отсутствующая <form id="streamer-form">
   mainContent.innerHTML = `
     <h2>📺 Стримерам</h2>
     <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
@@ -248,16 +290,12 @@ function showStreamersForm() {
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 
-  // ✅ Теперь форма с id="streamer-form" существует, и getElementById работает
   document.getElementById('streamer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const channelId = document.getElementById('channel-id').value;
     const twitchUrl = document.getElementById('twitch-url').value;
 
     try {
-      console.log("✅ Отправка запроса на:", `${API_URL}/api/register_streamer`);
-      console.log("✅ Данные:", { channel_id: channelId, twitch_url: twitchUrl });
-
       const response = await fetch(`${API_URL}/api/register_streamer`, {
         method: 'POST',
         headers: {
