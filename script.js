@@ -1,4 +1,4 @@
-// Укажите ваш реальный URL Amvera
+// Укажите ваш реальный URL Amvera (без пробелов!)
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Функция для загрузки событий ---
@@ -249,22 +249,28 @@ function showStreamersForm() {
     const twitchUrl = document.getElementById('twitch-url').value;
 
     try {
-      const API_URL = 'https://silovik-silovik.waw0.amvera.tech'; {
+      console.log("✅ Отправка запроса на:", `${API_URL}/api/register_streamer`);
+      console.log("✅ Данные:", { channel_id: channelId, twitch_url: twitchUrl });
+
+      const response = await fetch(`${API_URL}/api/register_streamer`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ channel_id: channelId, twitch_url: twitchUrl })
       });
 
       if (response.ok) {
-        alert('✅ Вы успешно подключили бота!');
+        const result = await response.json();
+        alert(result.message || '✅ Вы успешно подключили бота!');
         showMainMenu();
       } else {
         const error = await response.json();
-        alert(`❌ Ошибка: ${error.error}`);
+        alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
       }
     } catch (error) {
       console.error('Ошибка при подключении:', error);
-      alert('❌ Не удалось подключиться к серверу.');
+      alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
     }
   });
 }
@@ -273,5 +279,3 @@ function showStreamersForm() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
-
-
