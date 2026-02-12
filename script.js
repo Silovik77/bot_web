@@ -288,18 +288,6 @@ function showStreamersForm() {
       <button type="submit" class="submenu-btn">Подключить</button>
     </form>
     
-    <!-- Новая форма для редактирования текста уведомления -->
-    <h3>✏️ Редактировать текст уведомления</h3>
-    <form id="notification-text-form">
-      <label for="edit-channel-id">ID вашего Telegram-канала:</label>
-      <input type="text" id="edit-channel-id" placeholder="@your_channel" required>
-      
-      <label for="new-notification-text">Новый текст уведомления (используйте {twitch_url} для ссылки):</label>
-      <textarea id="new-notification-text" rows="3" placeholder="🔴 <b>Стрим начался!</b> Присоединяйтесь: {twitch_url}" required></textarea>
-      
-      <button type="submit" class="submenu-btn">Обновить</button>
-    </form>
-    
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 
@@ -329,37 +317,6 @@ function showStreamersForm() {
     } catch (error) {
       console.error('Ошибка при подключении:', error);
       alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
-    }
-  });
-
-  // Обработчик формы "Обновить текст"
-  document.getElementById('notification-text-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const channelId = document.getElementById('edit-channel-id').value;
-    const newText = document.getElementById('new-notification-text').value;
-
-    try {
-      const response = await fetch(`${API_URL}/api/update_notification_text`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ channel_id: channelId, notification_text: newText })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        alert(result.message || '✅ Текст уведомления обновлён!');
-        // Опционально: очистить форму
-        document.getElementById('edit-channel-id').value = '';
-        document.getElementById('new-notification-text').value = '';
-      } else {
-        const error = await response.json();
-        alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
-      }
-    } catch (error) {
-      console.error('Ошибка при обновлении текста:', error);
-      alert('❌ Не удалось обновить текст. Проверьте консоль.');
     }
   });
 }
