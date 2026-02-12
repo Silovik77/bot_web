@@ -98,7 +98,7 @@ function applyFilters() {
 // --- Отображение главного меню (с полным набором кнопок) ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
-  // ИСПРАВЛЕНО: inner HTML -> innerHTML
+  // ✅ ИСПРАВЛЕНО: inner HTML -> innerHTML
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
@@ -114,7 +114,7 @@ function showMainMenu() {
 // --- Отображение меню Arc Raiders (только подменю, без событий) ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
-  // ИСПРАВЛЕНО: inner HTML -> innerHTML
+  // ✅ ИСПРАВЛЕНО: inner HTML -> innerHTML
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
     <button class="submenu-btn" onclick="showEvents()">События</button>
@@ -144,7 +144,7 @@ async function showEvents() {
 
       for (const event of events) {
         const name = event.name || 'Неизвестное событие';
-        // ИСПРАВЛЕНО: loc ation -> location
+        // ✅ ИСПРАВЛЕНО: loc ation -> location
         const location = event.map || 'Неизвестная карта';
         const start = event.startTime;
         const end = event.endTime;
@@ -158,7 +158,7 @@ async function showEvents() {
         } else if (currentTimestamp < start) {
           const timeToStartMs = start - currentTimestamp;
           const timeToStartStr = formatTimeMs(timeToStartMs);
-          // ИСПРАВЛЕНО: ti meToStartStr -> timeToStartStr
+          // ✅ ИСПРАВЛЕНО: ti meToStartStr -> timeToStartStr
           upcomingEvents.push({ name, location, time_left: timeToStartStr });
         }
       }
@@ -232,7 +232,7 @@ async function showEvents() {
 // --- Отображение формы для стримеров ---
 function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
-  // ИСПРАВЛЕНО: добавлена отсутствующая <form id="streamer-form">
+  // ✅ ИСПРАВЛЕНО: добавлена отсутствующая <form id="streamer-form">
   mainContent.innerHTML = `
     <h2>📺 Стримерам</h2>
     <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
@@ -248,7 +248,7 @@ function showStreamersForm() {
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 
-  // ИСПРАВЛЕНО: теперь форма с id="streamer-form" существует, и getElementById работает
+  // ✅ Теперь форма с id="streamer-form" существует, и getElementById работает
   document.getElementById('streamer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const channelId = document.getElementById('channel-id').value;
