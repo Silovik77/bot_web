@@ -249,7 +249,7 @@ function showStreamersForm() {
     const twitchUrl = document.getElementById('twitch-url').value;
 
     try {
-      const response = await fetch(`${API_URL}/api/register_streamer`, {
+      const API_URL = 'https://silovik-silovik.waw0.amvera.tech'; {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ channel_id: channelId, twitch_url: twitchUrl })
@@ -273,4 +273,5 @@ function showStreamersForm() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
 
