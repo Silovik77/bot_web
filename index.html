@@ -96,12 +96,6 @@
                     <option value="upcoming">Предстоящие</option>
                 </select>
             </div>
-            <div class="filter-group">
-                <label for="event-name-filter">Фильтр по событию:</label>
-                <select id="event-name-filter">
-                    <option value="">Все события</option>
-                </select>
-            </div>
         </div>
 
         <!-- Контейнер для событий -->
@@ -116,39 +110,21 @@
     </div>
 
     <script>
-        // --- СЛОВАРИ ПЕРЕВОДА (основаны на предоставленных вами данных) ---
+        // --- СЛОВАРИ ПЕРЕВОДА ---
         const TRANSLATE_MAP = {
-            'Blue Gate': 'Синие врата',
-            'Spaceport': 'Космопорт',
-            'Dam': 'Плотина',
-            'Stella Montis': 'Стелла Монти',
-            'Buried City': 'Закопанный город',
-            'The Core': 'Ядро', // Добавлено из старого списка
-            'The Ruins': 'Руины', // Добавлено из старого списка
-            'The Vault': 'Хранилище', // Добавлено из старого списка
-            'The Outpost': 'Пост', // Добавлено из старого списка
-            'The Lab': 'Лаборатория', // Добавлено из старого списка
+            'The Core': 'Ядро',
+            'The Ruins': 'Руины',
+            'The Vault': 'Хранилище',
+            'The Outpost': 'Пост',
+            'The Lab': 'Лаборатория',
             // Добавьте сюда больше карт по мере необходимости
         };
 
         const TRANSLATE_EVENT = {
-            'Locked Gate': 'Закрытые врата',
-            'Launch Tower Loot': 'Добыча с башни запуска',
-            'Cold Snap': 'Холодная волна',
-            'Harvester': 'Жнец',
-            'Matriarch': 'Матриарх',
-            'Night Raid': 'Ночной рейд',
-            'Bird City': 'Птичий город',
-            'Prospecting Probes': 'Геологические зонды',
-            'Electromagnetic Storm': 'Электромагнитная буря',
-            'Hidden Bunker': 'Скрытый бункер',
-            'Husk Graveyard': 'Кладбище кукол',
-            'Lush Blooms': 'Пышные цветы',
-            'Uncovered Caches': 'Обнаруженные тайники',
-            'Extraction Raid': 'Рейд по добыче', // Добавлено из старого списка
-            'Survival Test': 'Тест выживания', // Добавлено из старого списка
-            'Team Deathmatch': 'Командный бой насмерть', // Добавлено из старого списка
-            'Capture the Objective': 'Захват цели', // Добавлено из старого списка
+            'Extraction Raid': 'Рейд по добыче',
+            'Survival Test': 'Тест выживания',
+            'Team Deathmatch': 'Командный бой насмерть',
+            'Capture the Objective': 'Захват цели',
             // Добавьте сюда больше событий по мере необходимости
         };
 
@@ -167,13 +143,9 @@
                 // Очищаем сетку событий
                 eventsGrid.innerHTML = '';
 
-                // Собираем все уникальные карты и события из данных
+                // Собираем все уникальные карты из данных
                 const mapsSet = new Set();
-                const eventsSet = new Set();
-                [...(data.active || []), ...(data.upcoming || [])].forEach(e => {
-                    mapsSet.add(e.location);
-                    eventsSet.add(e.name);
-                });
+                [...(data.active || []), ...(data.upcoming || [])].forEach(e => mapsSet.add(e.location));
 
                 // Заполняем фильтр по картам
                 const mapSelect = document.getElementById('map-filter');
@@ -184,17 +156,6 @@
                     option.value = map;
                     option.textContent = TRANSLATE_MAP[map] || map; // Показываем перевод или оригинальное имя
                     mapSelect.appendChild(option);
-                });
-
-                // Заполняем фильтр по событиям
-                const eventSelect = document.getElementById('event-name-filter');
-                // Очищаем старые опции, кроме первой ("Все события")
-                eventSelect.innerHTML = '<option value="">Все события</option>';
-                eventsSet.forEach(eventName => {
-                    const option = document.createElement('option');
-                    option.value = eventName;
-                    option.textContent = TRANSLATE_EVENT[eventName] || eventName; // Показываем перевод или оригинальное имя
-                    eventSelect.appendChild(option);
                 });
 
                 // Объединяем активные и предстоящие события в один массив, добавляя тип
@@ -251,12 +212,10 @@
                 // Добавляем обработчики фильтрации
                 const mapFilter = document.getElementById('map-filter');
                 const eventTypeFilter = document.getElementById('event-type-filter');
-                const eventNameFilter = document.getElementById('event-name-filter'); // Новый фильтр
 
                 function applyFilters() {
                     const selectedMap = mapFilter.value;
                     const selectedType = eventTypeFilter.value;
-                    const selectedEventName = eventNameFilter.value; // Новое значение
 
                     let filteredEvents = allEvents;
 
@@ -268,16 +227,11 @@
                         filteredEvents = filteredEvents.filter(e => e.type === selectedType);
                     }
 
-                    if (selectedEventName !== '') { // Новая проверка
-                        filteredEvents = filteredEvents.filter(e => e.name === selectedEventName);
-                    }
-
                     renderEvents(filteredEvents);
                 }
 
                 mapFilter.addEventListener('change', applyFilters);
                 eventTypeFilter.addEventListener('change', applyFilters);
-                eventNameFilter.addEventListener('change', applyFilters); // Новый обработчик
 
             } catch (e) {
                 console.error('Ошибка загрузки событий:', e);
