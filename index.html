@@ -1,13 +1,270 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>ARC Raiders</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARC Raiders Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .event-item, .update-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .event-item:last-child, .update-item:last-child {
+            border-bottom: none;
+        }
+        .active {
+            background-color: #d4edda;
+        }
+        .upcoming {
+            background-color: #fff3cd;
+        }
+        .time-left, .time-to-start {
+            font-style: italic;
+            color: #6c757d;
+        }
+        /* Стили для раздела обновлений */
+        #updates-container {
+            /* Можно добавить стили, если нужно */
+        }
+        .update-item h3 {
+            margin-top: 0;
+        }
+        .update-item small {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        .update-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .update-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-  <div id="main-content"></div>
-  <script src="script.js"></script>
+    <div class="container">
+        <header>
+            <h1>ARC Raiders Dashboard</h1>
+        </header>
+
+        <nav>
+            <button onclick="showSection('events-section')">События</button>
+            <button onclick="showSection('updates-section')">Обновления игры</button>
+        </nav>
+
+        <main>
+            <section id="events-section" class="section">
+                <h2>Активные и предстоящие события</h2>
+                <div id="events-container">
+                    <div id="active-events">
+                        <!-- Активные события будут загружены сюда -->
+                    </div>
+                    <div id="upcoming-events">
+                        <!-- Предстоящие события будут загружены сюда -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- НОВЫЙ РАЗДЕЛ: Обновления игры -->
+            <section id="updates-section" class="section">
+                <h2>Обновления игры</h2>
+                <div id="updates-container">
+                    <!-- Новости будут загружены сюда -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- ОБНОВЛЕНИЕ СПИСКА СОБЫТИЙ ---
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/user_events');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                const activeEventsContainer = document.getElementById('active-events');
+                const upcomingEventsContainer = document.getElementById('upcoming-events');
+
+                if (!activeEventsContainer || !upcomingEventsContainer) {
+                    console.error('❌ Один или оба контейнера событий не найдены.');
+                    return;
+                }
+
+                activeEventsContainer.innerHTML = '';
+                upcomingEventsContainer.innerHTML = '';
+
+                if (data.active && data.active.length > 0) {
+                    data.active.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.className = 'event-item active';
+                        eventElement.innerHTML = `
+                            <h4>${event.name}</h4>
+                            <p>Карта: ${event.location}</p>
+                            <p class="time-left">Осталось: ${event.time_left}</p>
+                        `;
+                        activeEventsContainer.appendChild(eventElement);
+                    });
+                } else {
+                    activeEventsContainer.innerHTML = '<p>Нет активных событий.</p>';
+                }
+
+                if (data.upcoming && data.upcoming.length > 0) {
+                    data.upcoming.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.className = 'event-item upcoming';
+                        eventElement.innerHTML = `
+                            <h4>${event.name}</h4>
+                            <p>Карта: ${event.location}</p>
+                            <p class="time-to-start">Начнётся через: ${event.time_left}</p>
+                        `;
+                        upcomingEventsContainer.appendChild(eventElement);
+                    });
+                } else {
+                    upcomingEventsContainer.innerHTML = '<p>Нет предстоящих событий.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('events-container').innerHTML = '<p>Ошибка загрузки событий.</p>';
+            }
+        }
+
+        // --- ОБНОВЛЕНИЕ СПИСКА ОБНОВЛЕНИЙ ---
+        async function loadUpdates() {
+            const updatesContainer = document.getElementById('updates-container');
+            if (!updatesContainer) {
+                console.error('❌ Элемент с id "updates-container" не найден.');
+                return;
+            }
+
+            try {
+                console.log('🔍 Загружаю обновления...');
+                const response = await fetch('/api/updates');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('📦 Полученные данные:', data);
+
+                // Проверяем, есть ли поле updates и является ли оно массивом
+                if (!Array.isArray(data.updates)) {
+                    console.warn('⚠️ Поле "updates" не найдено или не является массивом.');
+                    updatesContainer.innerHTML = '<p>Нет доступных обновлений.</p>';
+                    return;
+                }
+
+                // Очищаем контейнер перед обновлением
+                updatesContainer.innerHTML = '';
+
+                if (data.updates.length === 0) {
+                    updatesContainer.innerHTML = '<p>Нет доступных обновлений.</p>';
+                    return;
+                }
+
+                // Рендерим каждую новость
+                data.updates.forEach(update => {
+                    const updateElement = document.createElement('div');
+                    updateElement.className = 'update-item';
+
+                    // Используем русский перевод, если доступен, иначе оригинал
+                    const title = update.title_ru || update.title || 'Заголовок недоступен';
+                    const summary = update.summary_ru || update.summary || '';
+                    const date = update.date || '';
+                    const url = update.url || '#';
+
+                    updateElement.innerHTML = `
+                        <h3>${title}</h3>
+                        <p>${summary}</p>
+                        <small>${date}</small>
+                        <a href="${url}" target="_blank">🔗 Читать далее</a>
+                    `;
+                    updatesContainer.appendChild(updateElement);
+                });
+
+            } catch (error) {
+                console.error('❌ Ошибка при загрузке обновлений:', error);
+                // Показываем сообщение об ошибке пользователю
+                updatesContainer.innerHTML = '<p>Ошибка загрузки обновлений. Попробуйте позже.</p>';
+            }
+        }
+
+        // --- ФУНКЦИИ ДЛЯ КНОПОК ---
+        function showSection(sectionId) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            // Показываем выбранную
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Загружаем данные при открытии соответствующей секции
+            if (sectionId === 'updates-section') {
+                loadUpdates(); // Вызов функции для обновления списка новостей
+            } else if (sectionId === 'events-section') {
+                loadEvents(); // Вызов функции для обновления списка событий
+            }
+        }
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Загружаем события при загрузке
+            loadEvents();
+
+            // Загружаем обновления при загрузке (если секция "Обновления" активна по умолчанию)
+            // loadUpdates(); // Раскомментируйте, если нужно загружать сразу
+
+            // --- ОПЦИОНАЛЬНО: Обновлять каждые 5 минут ---
+            // setInterval(loadEvents, 5 * 60 * 1000);
+            // setInterval(loadUpdates, 5 * 60 * 1000);
+        });
+
+        // --- ОТКРЫТИЕ СЕКЦИИ ПО УМОЛЧАНИЮ ---
+        // Открыть, например, секцию событий при загрузке
+        window.onload = function() {
+            showSection('events-section'); // Замените на 'updates-section', если хотите, чтобы 'Обновления' были по умолчанию
+            // loadUpdates(); // Также можно вызвать загрузку обновлений, если они должны быть видны сразу
+        };
+    </script>
 </body>
 </html>
