@@ -177,3 +177,21 @@ nav {
 .streamer-form-btn:hover {
     background-color: #138496;
 }
+
+/* --- Стиль для кнопки "Назад" --- */
+.back-btn {
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.back-btn:hover {
+    background-color: #5a6268;
+}
