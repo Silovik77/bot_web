@@ -19,7 +19,7 @@ nav {
     gap: 10px;
     margin-bottom: 20px;
 }
-/* Кнопки главного меню */
+/* Главное меню */
 .menu-btn {
     padding: 12px 20px;
     cursor: pointer;
@@ -46,7 +46,7 @@ nav {
     margin-top: 20px;
 }
 
-/* --- Стили для внутреннего подменю в Arc Raiders --- */
+/* --- Стили для второго меню (внутри Arc Raiders) --- */
 .arc-raiders-submenu {
     display: flex;
     flex-direction: column;
@@ -56,30 +56,25 @@ nav {
 }
 
 .arc-raiders-submenu-btn {
-    padding: 10px 15px;
+    padding: 12px 15px;
     cursor: pointer;
-    background-color: #28a745; /* Зелёный цвет для подменю */
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
     width: 80%;
     text-align: center;
     font-size: 14px;
+    font-weight: bold;
 }
-
 .arc-raiders-submenu-btn:hover {
     background-color: #218838;
-}
-
-/* --- Стили для отображения подразделов --- */
-.arc-raiders-sub-content {
-    display: none;
 }
 
 /* --- Стили для событий --- */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Адаптивная сетка */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
 }
 
@@ -92,13 +87,13 @@ nav {
 }
 
 .event-item.active {
-    border-left: 5px solid #28a745; /* Зелёная граница для активных */
-    background-color: #e8f5e9; /* Лёгкий зелёный фон */
+    border-left: 5px solid #28a745;
+    background-color: #e8f5e9;
 }
 
 .event-item.upcoming {
-    border-left: 5px solid #ffc107; /* Жёлтая граница для предстоящих */
-    background-color: #fff3cd; /* Лёгкий жёлтый фон */
+    border-left: 5px solid #ffc107;
+    background-color: #fff3cd;
 }
 
 .event-item h4 {
