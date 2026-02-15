@@ -3,22 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arc Raiders Dashboard</title>
+    <title>ARC Raiders Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Arc Raiders</h1>
+            <h1>ARC Raiders Dashboard</h1>
         </header>
 
         <nav>
-            <!-- Главное меню (4 кнопки) -->
-            <a href="events.html"><button class="main-menu-btn">Событие</button></a>
-            <a href="news.html"><button class="main-menu-btn">Новости</button></a>
-            <a href="guides.html"><button class="main-menu-btn">Гайды</button></a>
-            <a href="trials.html"><button class="main-menu-btn">Испытание</button></a>
+            <!-- Главное меню (5 кнопок) -->
+            <button class="menu-btn" onclick="showSection('arc-raiders-section')">Arc Raiders</button>
+            <button class="menu-btn" onclick="showSection('streamers-section')">Стримерам</button>
+            <button class="menu-btn" onclick="showSection('clan-section')">Клан NE</button>
+            <button class="menu-btn" onclick="showSection('info-section')">Информация</button>
+            <button class="menu-btn" onclick="showSection('feedback-section')">Обратная связь</button>
         </nav>
+
+        <!-- Секция Arc Raiders -->
+        <section id="arc-raiders-section" class="section" style="display: none;">
+            <!-- Кнопка "Назад" -->
+            <button class="back-btn" onclick="goBackToMain()">← Назад в главное меню</button>
+            <h2>Arc Raiders</h2>
+            <!-- Второе меню (4 кнопки) -->
+            <div class="arc-raiders-submenu">
+                <button class="arc-raiders-submenu-btn" onclick="showArcRaiderSubSection('events-sub-content')">Событие</button>
+                <button class="arc-raiders-submenu-btn" onclick="showArcRaiderSubSection('news-sub-content')">Новости</button>
+                <button class="arc-raiders-submenu-btn" onclick="showArcRaiderSubSection('guides-sub-content')">Гайды</button>
+                <button class="arc-raiders-submenu-btn" onclick="showArcRaiderSubSection('trials-sub-content')">Испытание</button>
+            </div>
+
+            <!-- Подразделы -->
+            <div id="events-sub-content" class="arc-raiders-sub-content">
+                <h3>Активные и предстоящие события</h3>
+                <div id="events-container">
+                    <div id="active-events"></div>
+                    <div id="upcoming-events"></div>
+                </div>
+            </div>
+
+            <div id="news-sub-content" class="arc-raiders-sub-content" style="display: none;">
+                <h3>Новости игры</h3>
+                <div id="news-container">
+                    <!-- Новости будут загружены сюда -->
+                </div>
+            </div>
+
+            <div id="guides-sub-content" class="arc-raiders-sub-content" style="display: none;">
+                <h3>Гайды</h3>
+                <p>Раздел в разработке.</p>
+            </div>
+
+            <div id="trials-sub-content" class="arc-raiders-sub-content" style="display: none;">
+                <h3>Испытание</h3>
+                <p>Раздел в разработке.</p>
+            </div>
+        </section>
+
+        <!-- Секция Стримерам -->
+        <section id="streamers-section" class="section" style="display: none;">
+            <!-- Кнопка "Назад" -->
+            <button class="back-btn" onclick="goBackToMain()">← Назад в главное меню</button>
+            <h2>Стримерам</h2>
+            <div id="streamer-form-content" class="streamer-form">
+                <label for="channel-id-input">ID канала:</label>
+                <input type="text" id="channel-id-input" placeholder="Введите ID Telegram-канала">
+                <label for="twitch-url-input">Ссылка на Twitch:</label>
+                <input type="text" id="twitch-url-input" placeholder="Введите ссылку на Twitch стримера">
+                <button class="streamer-form-btn" onclick="registerStreamer()">Зарегистрировать</button>
+            </div>
+        </section>
+
+        <!-- Остальные секции (заглушка) -->
+        <section id="clan-section" class="section" style="display: none;">
+            <!-- Кнопка "Назад" -->
+            <button class="back-btn" onclick="goBackToMain()">← Назад в главное меню</button>
+            <h2>Клан NE</h2>
+            <p>Раздел в разработке.</p>
+        </section>
+        <section id="info-section" class="section" style="display: none;">
+            <!-- Кнопка "Назад" -->
+            <button class="back-btn" onclick="goBackToMain()">← Назад в главное меню</button>
+            <h2>Информация</h2>
+            <p>Раздел в разработке.</p>
+        </section>
+        <section id="feedback-section" class="section" style="display: none;">
+            <!-- Кнопка "Назад" -->
+            <button class="back-btn" onclick="goBackToMain()">← Назад в главное меню</button>
+            <h2>Обратная связь</h2>
+            <p>Раздел в разработке.</p>
+        </section>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
