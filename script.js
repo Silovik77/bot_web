@@ -18,23 +18,29 @@ async function loadEvents() {
         upcomingEventsContainer.innerHTML = '';
 
         if (data.active && data.active.length > 0) {
+            const activeGrid = document.createElement('div');
+            activeGrid.className = 'events-grid';
             data.active.forEach(event => {
                 const el = document.createElement('div');
                 el.className = 'event-item active';
-                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-left">Осталось: ${event.time_left}</p>`;
-                activeEventsContainer.appendChild(el);
+                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-left">⏱️ Осталось: ${event.time_left}</p>`;
+                activeGrid.appendChild(el);
             });
+            activeEventsContainer.appendChild(activeGrid);
         } else {
             activeEventsContainer.innerHTML = '<p>Нет активных событий.</p>';
         }
 
         if (data.upcoming && data.upcoming.length > 0) {
+            const upcomingGrid = document.createElement('div');
+            upcomingGrid.className = 'events-grid';
             data.upcoming.forEach(event => {
                 const el = document.createElement('div');
                 el.className = 'event-item upcoming';
-                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-to-start">Начнётся через: ${event.time_left}</p>`;
-                upcomingEventsContainer.appendChild(el);
+                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-to-start">⏰ Начнётся через: ${event.time_left}</p>`;
+                upcomingGrid.appendChild(el);
             });
+            upcomingEventsContainer.appendChild(upcomingGrid);
         } else {
             upcomingEventsContainer.innerHTML = '<p>Нет предстоящих событий.</p>';
         }
@@ -67,17 +73,22 @@ async function loadNews() {
             return;
         }
 
+        const newsGrid = document.createElement('div');
+        newsGrid.className = 'news-grid';
+
         data.updates.forEach(update => {
             const el = document.createElement('div');
             el.className = 'news-item';
             el.innerHTML = `
-                <h3>${update.title_ru || update.title || 'Заголовок недоступен'}</h3>
+                <h3>📰 ${update.title_ru || update.title || 'Заголовок недоступен'}</h3>
                 <p>${update.summary_ru || update.summary || ''}</p>
-                <small>${update.date || ''}</small>
-                <a href="${update.url || '#'}" target="_blank">Читать далее</a>
+                <small>📅 ${update.date || ''}</small>
+                <br><a href="${update.url || '#'}" target="_blank">🔗 Читать далее</a>
             `;
-            container.appendChild(el);
+            newsGrid.appendChild(el);
         });
+
+        container.appendChild(newsGrid);
 
     } catch (e) {
         console.error('Ошибка загрузки новостей:', e);
@@ -93,15 +104,9 @@ function showSection(sectionId) {
     document.getElementById(sectionId).style.display = 'block';
 
     // Загружаем данные при открытии
-    if (sectionId === 'arc-raiders-main-section') {
-        // По умолчанию показываем "Arc Raiders Main" (кнопки подменю)
-        showSubSection('arc-raiders-main-content');
-    }
-    if (sectionId === 'events-section') {
-        loadEvents();
-    }
-    if (sectionId === 'news-section') {
-        loadNews();
+    if (sectionId === 'arc-raiders-section') {
+        // Если открыто "Arc Raiders", по умолчанию показываем "События"
+        showArcRaiderSubSection('events-sub-content');
     }
     if (sectionId === 'streamers-section') {
         // Показываем форму при открытии раздела стримеров
@@ -109,8 +114,8 @@ function showSection(sectionId) {
     }
 }
 
-// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ ARC RAIDERS ---
-function showSubSection(subId) {
+// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВНУТРЕННЕГО ПОДМЕНЮ ARC RAIDERS ---
+function showArcRaiderSubSection(subId) {
     document.querySelectorAll('.arc-raiders-sub-content').forEach(el => el.style.display = 'none');
     document.getElementById(subId).style.display = 'block';
 
@@ -121,6 +126,7 @@ function showSubSection(subId) {
     if (subId === 'news-sub-content') {
         loadNews();
     }
+    // Другие подразделы (Гайды, Испытание) пока пустые
 }
 
 // --- ФУНКЦИЯ ДЛЯ РЕГИСТРАЦИИ СТРИМЕРА ---
@@ -160,10 +166,9 @@ async function registerStreamer() {
     }
 }
 
-
 // --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // По умолчанию открываем главное меню (например, Arc Raiders Main Content)
-    showSection('arc-raiders-main-section');
-    showSubSection('arc-raiders-main-content');
+    // По умолчанию открываем "Arc Raiders" -> "События"
+    showSection('arc-raiders-section');
+    showArcRaiderSubSection('events-sub-content');
 });
