@@ -3,7 +3,7 @@ async function loadEvents() {
     try {
         // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
         // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения
-        const response = await fetch('https://your-amvera-app-url/api/user_events');
+        const response = await fetch('https://your-amvera-app-url/api/user_events'); // <- ЗДЕСЬ!
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -38,6 +38,7 @@ async function loadEvents() {
         }
     } catch (e) {
         console.error('Ошибка загрузки событий:', e);
+        document.getElementById('events-container').innerHTML = '<p>Ошибка загрузки событий.</p>';
     }
 }
 
@@ -48,7 +49,7 @@ async function loadNews() {
 
     try {
         // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
-        const response = await fetch('https://your-amvera-app-url/api/updates');
+        const response = await fetch('https://your-amvera-app-url/api/updates'); // <- ЗДЕСЬ!
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -91,29 +92,27 @@ function showSection(sectionId) {
 
     // Загружаем данные при открытии
     if (sectionId === 'arc-raiders-section') {
-        // Если открыто "Arc Raiders", по умолчанию показываем "События"
+        // По умолчанию показываем "События"
         showSubSection('events-sub');
     }
-    if (sectionId === 'streamers-section') {
-        // Здесь можно добавить логику для стримеров, если нужно
-    }
+    // Другие действия при открытии секций, если нужно
 }
 
-// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ (внутри Arc Raiders) ---
+// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ ---
 function showSubSection(subId) {
     document.querySelectorAll('.sub-section').forEach(el => el.style.display = 'none');
     document.getElementById(subId).style.display = 'block';
 
-    if (subId === 'news-sub') {
-        loadNews();
-    } else if (subId === 'events-sub') {
+    if (subId === 'events-sub') {
         loadEvents();
+    } else if (subId === 'news-sub') {
+        loadNews(); // Вызываем загрузку новостей при открытии подраздела
     }
 }
 
 // --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // По умолчанию открываем главную секцию (например, Arc Raiders -> События)
+    // По умолчанию открываем "Arc Raiders" -> "События"
     showSection('arc-raiders-section');
     showSubSection('events-sub');
 });
