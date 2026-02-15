@@ -12,26 +12,31 @@ header {
     text-align: center;
     margin-bottom: 20px;
 }
-nav, .submenu {
+nav {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
 }
-.menu-btn, .submenu-btn, .streamer-form-btn {
-    padding: 10px 20px;
+/* Кнопки главного меню */
+.menu-btn {
+    padding: 12px 20px;
     cursor: pointer;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
-    width: 80%; /* Уменьшаем ширину кнопок */
+    width: 80%;
     text-align: center;
+    font-size: 16px;
+    font-weight: bold;
 }
-.menu-btn:hover, .submenu-btn:hover, .streamer-form-btn:hover {
+.menu-btn:hover {
     background-color: #0056b3;
 }
+
+/* Стили для секций */
 .section {
     display: none;
     background-color: white;
@@ -40,30 +45,140 @@ nav, .submenu {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-top: 20px;
 }
-.event-item, .news-item {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
+
+/* --- Стили для внутреннего подменю в Arc Raiders --- */
+.arc-raiders-submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
 }
-.event-item:last-child, .news-item:last-child {
-    border-bottom: none;
+
+.arc-raiders-submenu-btn {
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #28a745; /* Зелёный цвет для подменю */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+    font-size: 14px;
 }
-.active {
-    background-color: #d4edda;
+
+.arc-raiders-submenu-btn:hover {
+    background-color: #218838;
 }
-.upcoming {
-    background-color: #fff3cd;
+
+/* --- Стили для отображения подразделов --- */
+.arc-raiders-sub-content {
+    display: none;
 }
+
+/* --- Стили для событий --- */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Адаптивная сетка */
+    gap: 15px;
+}
+
+.event-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fafafa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-item.active {
+    border-left: 5px solid #28a745; /* Зелёная граница для активных */
+    background-color: #e8f5e9; /* Лёгкий зелёный фон */
+}
+
+.event-item.upcoming {
+    border-left: 5px solid #ffc107; /* Жёлтая граница для предстоящих */
+    background-color: #fff3cd; /* Лёгкий жёлтый фон */
+}
+
+.event-item h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+.event-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
 .time-left, .time-to-start {
     font-style: italic;
-    color: #6c757d;
+    font-size: 0.9em;
+    color: #555;
 }
-/* Стили для формы стримера */
+
+/* --- Стили для новостей --- */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.news-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.news-item h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.news-item p {
+    color: #555;
+}
+
+.news-item small {
+    color: #999;
+    font-size: 0.85em;
+}
+
+.news-item a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.news-item a:hover {
+    text-decoration: underline;
+}
+
+/* --- Стили для формы стримеров --- */
 .streamer-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+
 .streamer-form input, .streamer-form select {
     padding: 8px;
     margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.streamer-form-btn {
+    padding: 10px;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.streamer-form-btn:hover {
+    background-color: #138496;
 }
