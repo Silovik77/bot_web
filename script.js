@@ -8,6 +8,11 @@ async function loadEvents() {
         const activeEventsContainer = document.getElementById('active-events');
         const upcomingEventsContainer = document.getElementById('upcoming-events');
 
+        if (!activeEventsContainer || !upcomingEventsContainer) {
+            console.error('❌ Один или оба контейнера событий не найдены.');
+            return;
+        }
+
         activeEventsContainer.innerHTML = '';
         upcomingEventsContainer.innerHTML = '';
 
@@ -107,20 +112,7 @@ async function loadUpdates() {
     }
 }
 
-// --- ИНИЦИАЛИЗАЦИЯ ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Загружаем события при загрузке
-    loadEvents();
-
-    // Загружаем обновления при загрузке
-    loadUpdates();
-
-    // --- ОПЦИОНАЛЬНО: Обновлять каждые 5 минут ---
-    // setInterval(loadEvents, 5 * 60 * 1000);
-    // setInterval(loadUpdates, 5 * 60 * 1000);
-});
-
-// --- ФУНКЦИИ ДЛЯ КНОПОК ---
+// --- ФУНКЦИИ ДЛЯ КНОПОК (пример, адаптируйте под ваш HTML) ---
 function showSection(sectionId) {
     // Скрываем все секции
     document.querySelectorAll('.section').forEach(section => {
@@ -129,18 +121,30 @@ function showSection(sectionId) {
     // Показываем выбранную
     document.getElementById(sectionId).style.display = 'block';
 
-    // Если открыта секция обновлений, загружаем их
+    // Загружаем данные при открытии соответствующей секции
     if (sectionId === 'updates-section') {
-        loadUpdates();
-    }
-    // Если открыта секция событий, загружаем их
-    if (sectionId === 'events-section') {
-        loadEvents();
+        loadUpdates(); // Вызов функции для обновления списка новостей
+    } else if (sectionId === 'events-section') {
+        loadEvents(); // Вызов функции для обновления списка событий
     }
 }
+
+// --- ИНИЦИАЛИЗАЦИЯ ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Загружаем события при загрузке
+    loadEvents();
+
+    // Загружаем обновления при загрузке (если секция "Обновления" активна по умолчанию)
+    // loadUpdates(); // Раскомментируйте, если нужно загружать сразу
+
+    // --- ОПЦИОНАЛЬНО: Обновлять каждые 5 минут ---
+    // setInterval(loadEvents, 5 * 60 * 1000);
+    // setInterval(loadUpdates, 5 * 60 * 1000);
+});
 
 // --- ОТКРЫТИЕ СЕКЦИИ ПО УМОЛЧАНИЮ ---
 // Открыть, например, секцию событий при загрузке
 window.onload = function() {
     showSection('events-section'); // Замените на 'updates-section', если хотите, чтобы 'Обновления' были по умолчанию
+    // loadUpdates(); // Также можно вызвать загрузку обновлений, если они должны быть видны сразу
 };
