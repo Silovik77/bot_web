@@ -1,9 +1,11 @@
 // --- ОБНОВЛЕНИЕ СПИСКА СОБЫТИЙ ---
 async function loadEvents() {
+    const eventsContainer = document.getElementById('events-container');
+    if (!eventsContainer) return;
+
     try {
-        // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
-        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения
-        const response = await fetch('https://your-amvera-app-url/api/user_events'); // <- ЗДЕСЬ!
+        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
+        const response = await fetch('https://your-amvera-app-url/api/user_events');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -48,8 +50,8 @@ async function loadNews() {
     if (!container) return;
 
     try {
-        // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
-        const response = await fetch('https://your-amvera-app-url/api/updates'); // <- ЗДЕСЬ!
+        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
+        const response = await fetch('https://your-amvera-app-url/api/updates');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -91,28 +93,77 @@ function showSection(sectionId) {
     document.getElementById(sectionId).style.display = 'block';
 
     // Загружаем данные при открытии
-    if (sectionId === 'arc-raiders-section') {
-        // По умолчанию показываем "События"
-        showSubSection('events-sub');
+    if (sectionId === 'arc-raiders-main-section') {
+        // По умолчанию показываем "Arc Raiders Main" (кнопки подменю)
+        showSubSection('arc-raiders-main-content');
     }
-    // Другие действия при открытии секций, если нужно
+    if (sectionId === 'events-section') {
+        loadEvents();
+    }
+    if (sectionId === 'news-section') {
+        loadNews();
+    }
+    if (sectionId === 'streamers-section') {
+        // Показываем форму при открытии раздела стримеров
+        document.getElementById('streamer-form-content').style.display = 'block';
+    }
 }
 
-// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ ---
+// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ ARC RAIDERS ---
 function showSubSection(subId) {
-    document.querySelectorAll('.sub-section').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.arc-raiders-sub-content').forEach(el => el.style.display = 'none');
     document.getElementById(subId).style.display = 'block';
 
-    if (subId === 'events-sub') {
+    // Загружаем данные при открытии подраздела
+    if (subId === 'events-sub-content') {
         loadEvents();
-    } else if (subId === 'news-sub') {
-        loadNews(); // Вызываем загрузку новостей при открытии подраздела
+    }
+    if (subId === 'news-sub-content') {
+        loadNews();
     }
 }
+
+// --- ФУНКЦИЯ ДЛЯ РЕГИСТРАЦИИ СТРИМЕРА ---
+async function registerStreamer() {
+    const channelInput = document.getElementById('channel-id-input');
+    const twitchInput = document.getElementById('twitch-url-input');
+
+    const channelId = channelInput.value.trim();
+    const twitchUrl = twitchInput.value.trim();
+
+    if (!channelId || !twitchUrl) {
+        alert('Пожалуйста, заполните все поля.');
+        return;
+    }
+
+    try {
+        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
+        const response = await fetch('https://your-amvera-app-url/api/register_streamer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ channel_id: channelId, twitch_url: twitchUrl }),
+        });
+
+        if (response.ok) {
+            alert('Стример успешно зарегистрирован!');
+            channelInput.value = '';
+            twitchInput.value = '';
+        } else {
+            const errorData = await response.json();
+            alert(`Ошибка: ${errorData.message || 'Неизвестная ошибка.'}`);
+        }
+    } catch (error) {
+        console.error('Ошибка регистрации стримера:', error);
+        alert('Произошла ошибка при регистрации стримера.');
+    }
+}
+
 
 // --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // По умолчанию открываем "Arc Raiders" -> "События"
-    showSection('arc-raiders-section');
-    showSubSection('events-sub');
+    // По умолчанию открываем главное меню (например, Arc Raiders Main Content)
+    showSection('arc-raiders-main-section');
+    showSubSection('arc-raiders-main-content');
 });
