@@ -4,8 +4,8 @@ async function loadEvents() {
     if (!eventsContainer) return;
 
     try {
-        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
-        const response = await fetch('https://your-amvera-app-url/api/user_events');
+        // ИСПОЛЬЗУЕМ ВАШ ДОМЕН
+        const response = await fetch('https://silovik-silovik.waw0.amvera.tech/api/user_events');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -50,8 +50,8 @@ async function loadNews() {
     if (!container) return;
 
     try {
-        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
-        const response = await fetch('https://your-amvera-app-url/api/updates');
+        // ИСПОЛЬЗУЕМ ВАШ ДОМЕН
+        const response = await fetch('https://silovik-silovik.waw0.amvera.tech/api/updates');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -137,8 +137,8 @@ async function registerStreamer() {
     }
 
     try {
-        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения на Amvera
-        const response = await fetch('https://your-amvera-app-url/api/register_streamer', {
+        // ИСПОЛЬЗУЕМ ВАШ ДОМЕН
+        const response = await fetch('https://silovik-silovik.waw0.amvera.tech/api/register_streamer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
