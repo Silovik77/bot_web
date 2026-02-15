@@ -23,12 +23,12 @@ async function loadEvents() {
             data.active.forEach(event => {
                 const el = document.createElement('div');
                 el.className = 'event-item active';
-                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-left">⏱️ Осталось: ${event.time_left}</p>`;
+                el.innerHTML = `<h4>✅ ${event.name}</h4><p>Карта: ${event.location}</p><p class="time-left">⏱️ Осталось: ${event.time_left}</p>`;
                 activeGrid.appendChild(el);
             });
             activeEventsContainer.appendChild(activeGrid);
         } else {
-            activeEventsContainer.innerHTML = '<p>Нет активных событий.</p>';
+            activeEventsContainer.innerHTML = '<p class="no-data">Нет активных событий.</p>';
         }
 
         if (data.upcoming && data.upcoming.length > 0) {
@@ -37,16 +37,16 @@ async function loadEvents() {
             data.upcoming.forEach(event => {
                 const el = document.createElement('div');
                 el.className = 'event-item upcoming';
-                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-to-start">⏰ Начнётся через: ${event.time_left}</p>`;
+                el.innerHTML = `<h4>⏳ ${event.name}</h4><p>Карта: ${event.location}</p><p class="time-to-start">⏰ Начнётся через: ${event.time_left}</p>`;
                 upcomingGrid.appendChild(el);
             });
             upcomingEventsContainer.appendChild(upcomingGrid);
         } else {
-            upcomingEventsContainer.innerHTML = '<p>Нет предстоящих событий.</p>';
+            upcomingEventsContainer.innerHTML = '<p class="no-data">Нет предстоящих событий.</p>';
         }
     } catch (e) {
         console.error('Ошибка загрузки событий:', e);
-        document.getElementById('events-container').innerHTML = '<p>Ошибка загрузки событий.</p>';
+        document.getElementById('events-container').innerHTML = '<p class="no-data">Ошибка загрузки событий.</p>';
     }
 }
 
@@ -64,12 +64,12 @@ async function loadNews() {
         container.innerHTML = '';
 
         if (!Array.isArray(data.updates)) {
-            container.innerHTML = '<p>Нет доступных новостей.</p>';
+            container.innerHTML = '<p class="no-data">Нет доступных новостей.</p>';
             return;
         }
 
         if (data.updates.length === 0) {
-            container.innerHTML = '<p>Нет доступных новостей.</p>';
+            container.innerHTML = '<p class="no-data">Нет доступных новостей.</p>';
             return;
         }
 
@@ -92,7 +92,7 @@ async function loadNews() {
 
     } catch (e) {
         console.error('Ошибка загрузки новостей:', e);
-        container.innerHTML = '<p>Ошибка загрузки новостей. Попробуйте позже.</p>';
+        container.innerHTML = '<p class="no-data">Ошибка загрузки новостей. Попробуйте позже.</p>';
     }
 }
 
@@ -105,11 +105,10 @@ function showSection(sectionId) {
 
     // Загружаем данные при открытии
     if (sectionId === 'arc-raiders-section') {
-        // Если открыто "Arc Raiders", по умолчанию показываем "События"
+        // По умолчанию показываем "Событие"
         showArcRaiderSubSection('events-sub-content');
     }
     if (sectionId === 'streamers-section') {
-        // Показываем форму при открытии раздела стримеров
         document.getElementById('streamer-form-content').style.display = 'block';
     }
 }
@@ -126,7 +125,6 @@ function showArcRaiderSubSection(subId) {
     if (subId === 'news-sub-content') {
         loadNews();
     }
-    // Другие подразделы (Гайды, Испытание) пока пустые
 }
 
 // --- ФУНКЦИЯ ДЛЯ РЕГИСТРАЦИИ СТРИМЕРА ---
@@ -168,7 +166,6 @@ async function registerStreamer() {
 
 // --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // По умолчанию открываем "Arc Raiders" -> "События"
-    showSection('arc-raiders-section');
-    showArcRaiderSubSection('events-sub-content');
+    // По умолчанию открываем главную страницу (все секции скрыты)
+    // Ничего не показываем, пока пользователь не нажмёт кнопку.
 });
