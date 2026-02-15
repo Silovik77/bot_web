@@ -1,31 +1,26 @@
 // --- ОБНОВЛЕНИЕ СПИСКА СОБЫТИЙ ---
 async function loadEvents() {
     try {
-        const response = await fetch('/api/user_events');
+        // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
+        // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения
+        const response = await fetch('https://your-amvera-app-url/api/user_events');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
         const activeEventsContainer = document.getElementById('active-events');
         const upcomingEventsContainer = document.getElementById('upcoming-events');
 
-        if (!activeEventsContainer || !upcomingEventsContainer) {
-            console.error('❌ Один или оба контейнера событий не найдены.');
-            return;
-        }
+        if (!activeEventsContainer || !upcomingEventsContainer) return;
 
         activeEventsContainer.innerHTML = '';
         upcomingEventsContainer.innerHTML = '';
 
         if (data.active && data.active.length > 0) {
             data.active.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = 'event-item active';
-                eventElement.innerHTML = `
-                    <h4>${event.name}</h4>
-                    <p>Карта: ${event.location}</p>
-                    <p class="time-left">Осталось: ${event.time_left}</p>
-                `;
-                activeEventsContainer.appendChild(eventElement);
+                const el = document.createElement('div');
+                el.className = 'event-item active';
+                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-left">Осталось: ${event.time_left}</p>`;
+                activeEventsContainer.appendChild(el);
             });
         } else {
             activeEventsContainer.innerHTML = '<p>Нет активных событий.</p>';
@@ -33,118 +28,92 @@ async function loadEvents() {
 
         if (data.upcoming && data.upcoming.length > 0) {
             data.upcoming.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = 'event-item upcoming';
-                eventElement.innerHTML = `
-                    <h4>${event.name}</h4>
-                    <p>Карта: ${event.location}</p>
-                    <p class="time-to-start">Начнётся через: ${event.time_left}</p>
-                `;
-                upcomingEventsContainer.appendChild(eventElement);
+                const el = document.createElement('div');
+                el.className = 'event-item upcoming';
+                el.innerHTML = `<h4>${event.name}</h4><p>Карта: ${event.location}</p><p class="time-to-start">Начнётся через: ${event.time_left}</p>`;
+                upcomingEventsContainer.appendChild(el);
             });
         } else {
             upcomingEventsContainer.innerHTML = '<p>Нет предстоящих событий.</p>';
         }
-    } catch (error) {
-        console.error('Error loading events:', error);
-        document.getElementById('events-container').innerHTML = '<p>Ошибка загрузки событий.</p>';
+    } catch (e) {
+        console.error('Ошибка загрузки событий:', e);
     }
 }
 
-// --- ОБНОВЛЕНИЕ СПИСКА ОБНОВЛЕНИЙ ---
-async function loadUpdates() {
-    const updatesContainer = document.getElementById('updates-container');
-    if (!updatesContainer) {
-        console.error('❌ Элемент с id "updates-container" не найден.');
-        return;
-    }
+// --- ОБНОВЛЕНИЕ СПИСКА НОВОСТЕЙ ---
+async function loadNews() {
+    const container = document.getElementById('news-container');
+    if (!container) return;
 
     try {
-        console.log('🔍 Загружаю обновления...');
-        const response = await fetch('/api/updates');
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
+        const response = await fetch('https://your-amvera-app-url/api/updates');
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        console.log('📦 Полученные данные:', data);
 
-        // Проверяем, есть ли поле updates и является ли оно массивом
+        container.innerHTML = '';
+
         if (!Array.isArray(data.updates)) {
-            console.warn('⚠️ Поле "updates" не найдено или не является массивом.');
-            updatesContainer.innerHTML = '<p>Нет доступных обновлений.</p>';
+            container.innerHTML = '<p>Нет доступных новостей.</p>';
             return;
         }
-
-        // Очищаем контейнер перед обновлением
-        updatesContainer.innerHTML = '';
 
         if (data.updates.length === 0) {
-            updatesContainer.innerHTML = '<p>Нет доступных обновлений.</p>';
+            container.innerHTML = '<p>Нет доступных новостей.</p>';
             return;
         }
 
-        // Рендерим каждую новость
         data.updates.forEach(update => {
-            const updateElement = document.createElement('div');
-            updateElement.className = 'update-item';
-
-            // Используем русский перевод, если доступен, иначе оригинал
-            const title = update.title_ru || update.title || 'Заголовок недоступен';
-            const summary = update.summary_ru || update.summary || '';
-            const date = update.date || '';
-            const url = update.url || '#';
-
-            updateElement.innerHTML = `
-                <h3>${title}</h3>
-                <p>${summary}</p>
-                <small>${date}</small>
-                <a href="${url}" target="_blank">🔗 Читать далее</a>
+            const el = document.createElement('div');
+            el.className = 'news-item';
+            el.innerHTML = `
+                <h3>${update.title_ru || update.title || 'Заголовок недоступен'}</h3>
+                <p>${update.summary_ru || update.summary || ''}</p>
+                <small>${update.date || ''}</small>
+                <a href="${update.url || '#'}" target="_blank">Читать далее</a>
             `;
-            updatesContainer.appendChild(updateElement);
+            container.appendChild(el);
         });
 
-    } catch (error) {
-        console.error('❌ Ошибка при загрузке обновлений:', error);
-        // Показываем сообщение об ошибке пользователю
-        updatesContainer.innerHTML = '<p>Ошибка загрузки обновлений. Попробуйте позже.</p>';
+    } catch (e) {
+        console.error('Ошибка загрузки новостей:', e);
+        container.innerHTML = '<p>Ошибка загрузки новостей. Попробуйте позже.</p>';
     }
 }
 
-// --- ФУНКЦИИ ДЛЯ КНОПОК (пример, адаптируйте под ваш HTML) ---
+// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ РАЗДЕЛОВ ---
 function showSection(sectionId) {
     // Скрываем все секции
-    document.querySelectorAll('.section').forEach(section => {
-        section.style.display = 'none';
-    });
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
     // Показываем выбранную
     document.getElementById(sectionId).style.display = 'block';
 
-    // Загружаем данные при открытии соответствующей секции
-    if (sectionId === 'updates-section') {
-        loadUpdates(); // Вызов функции для обновления списка новостей
-    } else if (sectionId === 'events-section') {
-        loadEvents(); // Вызов функции для обновления списка событий
+    // Загружаем данные при открытии
+    if (sectionId === 'arc-raiders-section') {
+        // Если открыто "Arc Raiders", по умолчанию показываем "События"
+        showSubSection('events-sub');
+    }
+    if (sectionId === 'streamers-section') {
+        // Здесь можно добавить логику для стримеров, если нужно
+    }
+}
+
+// --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ПОДМЕНЮ (внутри Arc Raiders) ---
+function showSubSection(subId) {
+    document.querySelectorAll('.sub-section').forEach(el => el.style.display = 'none');
+    document.getElementById(subId).style.display = 'block';
+
+    if (subId === 'news-sub') {
+        loadNews();
+    } else if (subId === 'events-sub') {
+        loadEvents();
     }
 }
 
 // --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Загружаем события при загрузке
-    loadEvents();
-
-    // Загружаем обновления при загрузке (если секция "Обновления" активна по умолчанию)
-    // loadUpdates(); // Раскомментируйте, если нужно загружать сразу
-
-    // --- ОПЦИОНАЛЬНО: Обновлять каждые 5 минут ---
-    // setInterval(loadEvents, 5 * 60 * 1000);
-    // setInterval(loadUpdates, 5 * 60 * 1000);
+    // По умолчанию открываем главную секцию (например, Arc Raiders -> События)
+    showSection('arc-raiders-section');
+    showSubSection('events-sub');
 });
-
-// --- ОТКРЫТИЕ СЕКЦИИ ПО УМОЛЧАНИЮ ---
-// Открыть, например, секцию событий при загрузке
-window.onload = function() {
-    showSection('events-section'); // Замените на 'updates-section', если хотите, чтобы 'Обновления' были по умолчанию
-    // loadUpdates(); // Также можно вызвать загрузку обновлений, если они должны быть видны сразу
-};
