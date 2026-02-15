@@ -98,9 +98,13 @@ async function loadNews() {
 
 // --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ РАЗДЕЛОВ ---
 function showSection(sectionId) {
+    // Скрываем главное меню
+    document.querySelector('nav').style.display = 'none';
     // Скрываем все секции
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-    // Показываем выбранную
+    // Скрываем заголовок главной страницы
+    document.querySelector('header').style.display = 'none';
+    // Показываем выбранную секцию
     document.getElementById(sectionId).style.display = 'block';
 
     // Загружаем данные при открытии
@@ -111,6 +115,7 @@ function showSection(sectionId) {
     if (sectionId === 'streamers-section') {
         document.getElementById('streamer-form-content').style.display = 'block';
     }
+    // Добавьте другие секции, если нужно
 }
 
 // --- ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВНУТРЕННЕГО ПОДМЕНЮ ARC RAIDERS ---
@@ -125,6 +130,7 @@ function showArcRaiderSubSection(subId) {
     if (subId === 'news-sub-content') {
         loadNews();
     }
+    // Другие подразделы (Гайды, Испытание) пока пустые
 }
 
 // --- ФУНКЦИЯ ДЛЯ РЕГИСТРАЦИИ СТРИМЕРА ---
@@ -162,6 +168,16 @@ async function registerStreamer() {
         console.error('Ошибка регистрации стримера:', error);
         alert('Произошла ошибка при регистрации стримера.');
     }
+}
+
+// --- ФУНКЦИЯ ВОЗВРАТА В ГЛАВНОЕ МЕНЮ ---
+function goBackToMain() {
+    // Показываем главное меню
+    document.querySelector('nav').style.display = 'flex';
+    // Скрываем все секции
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    // Показываем заголовок главной страницы
+    document.querySelector('header').style.display = 'block';
 }
 
 // --- ИНИЦИАЛИЗАЦИЯ ---
