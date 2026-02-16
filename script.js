@@ -253,7 +253,8 @@ function showStreamersForm() {
   mainContent.innerHTML = `
     📺 Стримерам
     Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.
-    ID вашего Telegram-канала:
+    <label for="channel-id">ID вашего Telegram-канала:</label>
+    <input type="text" id="channel-id" placeholder="Например: 123456789" required>
     <label for="twitch-url">Ссылка на Twitch/YouTube:</label>
     <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required>
     <button type="submit" class="submenu-btn" onclick="registerStreamer()">Подключить</button>
@@ -290,3 +291,4 @@ async function registerStreamer() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
