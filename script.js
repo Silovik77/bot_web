@@ -3,26 +3,26 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
- "Dam":  "Плотина",
- "Buried City":  "Закопанный город",
- "Spaceport":  "Космопорт",
- "Blue Gate":  "Синие врата",
- "Stella Montis":  "Стелла Монтис"
+ "Dam": "Плотина",
+ "Buried City": "Закопанный город",
+ "Spaceport": "Космопорт",
+ "Blue Gate": "Синие врата",
+ "Stella Montis": "Стелла Монтис"
 };
 const EVENT_TRANSLATIONS = {
- "Night Raid":  "Ночной налёт",
- "Harvester":  "Жнец",
- "Matriarch":  "Матриарх",
- "Cold Snap":  "Холодная волна",
- "Electromagnetic Storm":  "Электромагнитная буря",
- "Launch Tower Loot":  "Добыча с пусковой башни",
- "Hidden Bunker":  "Скрытый бункер",
- "Husk Graveyard":  "Кладбище Хасков",
- "Prospecting Probes":  "Геологические зонды",
- "Uncovered Caches":  "Обнаруженные тайники",
- "Lush Blooms":  "Пышные цветения",
- "Locked Gate":  "Закрытые врата",
- "Bird City":  "Птичий город"
+ "Night Raid": "Ночной налёт",
+ "Harvester": "Жнец",
+ "Matriarch": "Матриарх",
+ "Cold Snap": "Холодная волна",
+ "Electromagnetic Storm": "Электромагнитная буря",
+ "Launch Tower Loot": "Добыча с пусковой башни",
+ "Hidden Bunker": "Скрытый бункер",
+ "Husk Graveyard": "Кладбище Хасков",
+ "Prospecting Probes": "Геологические зонды",
+ "Uncovered Caches": "Обнаруженные тайники",
+ "Lush Blooms": "Пышные цветения",
+ "Locked Gate": "Закрытые врата",
+ "Bird City": "Птичий город"
 };
 
 // --- Функция для загрузки событий ---
@@ -48,7 +48,7 @@ async function loadNews() {
       throw new Error(`Ошибка сервера при загрузке новостей: ${response.status}`);
     }
     const rawData = await response.json();
-    // Проверяем, что поле updates - это массив
+    // Проверяем, что поле updates — это массив
     if (!Array.isArray(rawData.updates)) {
       console.warn('⚠️ Поле "updates" в ответе от API не является массивом.', rawData);
       return [];
@@ -88,30 +88,30 @@ function parseTimeStr(str) {
 
 function getMapIcon(map) {
   const icons = {
-    "Dam":  "💧",
-    "Buried City":  "🏙️",
-    "Spaceport":  "🚀",
-    "Blue Gate":  "🔵",
-    "Stella Montis":  "⛰️"
+    "Dam": "💧",
+    "Buried City": "🏙️",
+    "Spaceport": "🚀",
+    "Blue Gate": "🔵",
+    "Stella Montis": "⛰️"
   };
   return icons[map] || "📍";
 }
 
 function getEventIcon(name) {
   const icons = {
-    "Night Raid":  "🌙",
-    "Harvester":  "🪴",
-    "Matriarch":  "👑",
-    "Cold Snap":  "❄️",
-    "Electromagnetic Storm":  "⚡",
-    "Launch Tower Loot":  "🎯",
-    "Hidden Bunker":  "🔒",
-    "Husk Graveyard":  "💀",
-    "Prospecting Probes":  "📡",
-    "Uncovered Caches":  "📦",
-    "Lush Blooms":  "🌿",
-    "Locked Gate":  "🚪",
-    "Bird City":  "🐦"
+    "Night Raid": "🌙",
+    "Harvester": "🪴",
+    "Matriarch": "👑",
+    "Cold Snap": "❄️",
+    "Electromagnetic Storm": "⚡",
+    "Launch Tower Loot": "🎯",
+    "Hidden Bunker": "🔒",
+    "Husk Graveyard": "💀",
+    "Prospecting Probes": "📡",
+    "Uncovered Caches": "📦",
+    "Lush Blooms": "🌿",
+    "Locked Gate": "🚪",
+    "Bird City": "🐦"
   };
   return icons[name] || "❓";
 }
@@ -145,13 +145,29 @@ function applyFilters() {
 // --- Отображение главного меню ---
 function showMainMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<p>Добро пожаловать! Выберите раздел в меню ниже.</p><div class="main-menu"><button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button><button class="menu-btn" onclick="showStreamersForm()">Стримерам</button><button class="menu-btn" onclick="alert('Клан NE — в разработке')">Клан NE</button><button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button><button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button></div>`;
+  mainContent.innerHTML = `
+    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <div class="main-menu">
+      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+      <button class="menu-btn" onclick="alert('Клан NE — в разработке')">Клан NE</button>
+      <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
+      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
+    </div>
+  `;
 }
 
 // --- Отображение меню Arc Raiders ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<h2>🎮 Arc Raiders</h2><button class="submenu-btn" onclick="showEvents()">События</button><button class="submenu-btn" onclick="showNews()">Обновления</button><button class="submenu-btn" onclick="alert('Раздел \\\'Гайды\\\' в разработке.')">Гайды</button><button class="submenu-btn" onclick="alert('Раздел \\\'Испытание\\\' в разработке.')">Испытание</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+  mainContent.innerHTML = `
+    <h2>🎮 Arc Raiders</h2>
+    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="showNews()">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+  `;
 }
 
 // --- Отображение новостей ---
@@ -161,7 +177,11 @@ async function showNews() {
     const mainContent = document.getElementById('main-content');
 
     if (newsData.length === 0) {
-      mainContent.innerHTML = '<h2>📰 Новости игры</h2><p>Нет доступных новостей.</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+      mainContent.innerHTML = `
+        <h2>📰 Новости игры</h2>
+        <p>Нет доступных новостей.</p>
+        <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+      `;
       return;
     }
 
@@ -191,7 +211,10 @@ async function showNews() {
   } catch (error) {
     console.error('Ошибка при отображении новостей:', error);
     const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+    mainContent.innerHTML = `
+      <p style="color: red;">❌ Ошибка: ${error.message}</p>
+      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+    `;
   }
 }
 
@@ -303,7 +326,10 @@ async function showEvents() {
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+    mainContent.innerHTML = `
+      <p style="color: red;">❌ Ошибка: ${error.message}</p>
+      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+    `;
   }
 }
 
