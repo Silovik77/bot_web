@@ -4,7 +4,7 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
  "Dam ":  "Плотина ",
- "Buried City ":  "Закопанный город ",
+ "Buried City ":"Закопанный город ",
  "Spaceport ":  "Космопорт ",
  "Blue Gate ":  "Синие врата ",
  "Stella Montis ":  "Стелла Монтис "
@@ -291,4 +291,5 @@ async function registerStreamer() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
 
