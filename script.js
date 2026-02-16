@@ -57,7 +57,6 @@ async function loadNews() {
   } catch (error) {
     console.error('Ошибка при загрузке новостей:', error);
     return []; // Возвращаем пустой массив в случае ошибки
-  }
 }
 
 // --- Вспомогательные функции ---
@@ -169,9 +168,10 @@ async function showNews() {
     let html = '<h2>📰 Новости игры</h2>';
 
     newsData.forEach(item => {
-      // Используем квадратные скобки для доступа к ключам, чтобы избежать проблем с пробелами
+      // ✅ Используем квадратные скобки для доступа к ключам (защита от пробелов)
       const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
-      const summary = item['summary_ru'] || item['summary'] || '';
+      // ✅ Заменяем \n на <br> для красивого форматирования
+      const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, '<br>');
       const date = item['date'] || '';
       const url = item['url'] || '#';
 
