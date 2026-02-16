@@ -1,42 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>ARC Raiders Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARC Raiders</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🎮 ARC Raiders</h1>
-      <p>Ваш центр управления событиями и информацией</p>
-    </header>
-
-    <!-- Основной контент -->
-    <main id="main-content">
-      <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-    </main>
-
-    <!-- Нижняя панель навигации -->
-    <nav class="bottom-nav">
-      <button class="nav-btn btn-primary" onclick="showArcRaidersMenu()">
-        <span>Arc Raiders</span>
-      </button>
-      <button class="nav-btn btn-secondary" onclick="showStreamersForm()">
-        <span>Стримерам</span>
-      </button>
-      <button class="nav-btn btn-accent" onclick="alert('Раздел \\'Клан NE\\' в разработке.')">
-        <span>Клан NE</span>
-      </button>
-      <button class="nav-btn btn-info" onclick="alert('Раздел \\'Информация\\' в разработке.')">
-        <span>Информация</span>
-      </button>
-      <button class="nav-btn btn-feedback" onclick="alert('Раздел \\'Обратная связь\\' в разработке.')">
-        <span>Обратная связь</span>
-      </button>
-    </nav>
-  </div>
+  <div id="main-content"></div>
+  <script src="script.js"></script>
 </body>
 </html>
