@@ -188,9 +188,9 @@ async function showNews() {
     let html = '<h2>📰 Новости игры</h2>';
 
     newsData.forEach(item => {
-      // ✅ Используем квадратные скобки для доступа к ключам (защита от пробелов)
+      // Используем квадратные скобки для доступа к ключам (защита от пробелов)
       const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
-      // ✅ Заменяем \n на <br> для красивого форматирования
+      // Заменяем \n на <br> для красивого форматирования
       const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, '<br>');
       const date = item['date'] || '';
       const url = item['url'] || '#';
