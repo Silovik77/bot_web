@@ -3,7 +3,7 @@ async function loadEvents() {
     try {
         // ИСПРАВЛЕНИЕ: URL должен быть на ваш бот на Amvera!
         // ЗАМЕНИТЕ 'https://your-amvera-app-url' на реальный URL вашего приложения
-        const response = await fetch('https://your-amvera-app-url/api/user_events'); // <- ЗДЕСЬ!
+        const response = await fetch('https://silovik-silovik.waw0.amvera.tech'); // <- ЗДЕСЬ!
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
