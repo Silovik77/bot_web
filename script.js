@@ -3,26 +3,26 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
- "Dam": "Плотина",
- "Buried City": "Закопанный город",
- "Spaceport": "Космопорт",
- "Blue Gate": "Синие врата",
- "Stella Montis": "Стелла Монтис"
+  "Dam": "Плотина",
+  "Buried City": "Закопанный город",
+  "Spaceport": "Космопорт",
+  "Blue Gate": "Синие врата",
+  "Stella Montis": "Стелла Монтис"
 };
 const EVENT_TRANSLATIONS = {
- "Night Raid": "Ночной налёт",
- "Harvester": "Жнец",
- "Matriarch": "Матриарх",
- "Cold Snap": "Холодная волна",
- "Electromagnetic Storm": "Электромагнитная буря",
- "Launch Tower Loot": "Добыча с пусковой башни",
- "Hidden Bunker": "Скрытый бункер",
- "Husk Graveyard": "Кладбище Хасков",
- "Prospecting Probes": "Геологические зонды",
- "Uncovered Caches": "Обнаруженные тайники",
- "Lush Blooms": "Пышные цветения",
- "Locked Gate": "Закрытые врата",
- "Bird City": "Птичий город"
+  "Night Raid": "Ночной налёт",
+  "Harvester": "Жнец",
+  "Matriarch": "Матриарх",
+  "Cold Snap": "Холодная волна",
+  "Electromagnetic Storm": "Электромагнитная буря",
+  "Launch Tower Loot": "Добыча с пусковой башни",
+  "Hidden Bunker": "Скрытый бункер",
+  "Husk Graveyard": "Кладбище Хасков",
+  "Prospecting Probes": "Геологические зонды",
+  "Uncovered Caches": "Обнаруженные тайники",
+  "Lush Blooms": "Пышные цветения",
+  "Locked Gate": "Закрытые врата",
+  "Bird City": "Птичий город"
 };
 
 // --- Функция для загрузки событий ---
