@@ -40,6 +40,26 @@ async function loadEvents() {
   }
 }
 
+// --- Функция для загрузки новостей ---
+async function loadNews() {
+  try {
+    const response = await fetch(`${API_URL}/api/updates`);
+    if (!response.ok) {
+      throw new Error(`Ошибка сервера при загрузке новостей: ${response.status}`);
+    }
+    const rawData = await response.json();
+    // Проверяем, что поле updates - это массив
+    if (!Array.isArray(rawData.updates)) {
+      console.warn('⚠️ Поле "updates" в ответе от API не является массивом.', rawData);
+      return [];
+    }
+    return rawData.updates;
+  } catch (error) {
+    console.error('Ошибка при загрузке новостей:', error);
+    return []; // Возвращаем пустой массив в случае ошибки
+  }
+}
+
 // --- Вспомогательные функции ---
 function formatTimeMs(ms) {
   const sec = Math.floor(ms / 1000);
@@ -132,7 +152,47 @@ function showMainMenu() {
 // --- Отображение меню Arc Raiders ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<h2>🎮 Arc Raiders</h2><button class="submenu-btn" onclick="showEvents()">События</button><button class="submenu-btn" onclick="alert('Раздел \\\'Обновления\\\' в разработке.')">Обновления</button><button class="submenu-btn" onclick="alert('Раздел \\\'Гайды\\\' в разработке.')">Гайды</button><button class="submenu-btn" onclick="alert('Раздел \\\'Испытание\\\' в разработке.')">Испытание</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+  mainContent.innerHTML = `<h2>🎮 Arc Raiders</h2><button class="submenu-btn" onclick="showEvents()">События</button><button class="submenu-btn" onclick="showNews()">Обновления</button><button class="submenu-btn" onclick="alert('Раздел \\\'Гайды\\\' в разработке.')">Гайды</button><button class="submenu-btn" onclick="alert('Раздел \\\'Испытание\\\' в разработке.')">Испытание</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+}
+
+// --- Отображение новостей ---
+async function showNews() {
+  try {
+    const newsData = await loadNews();
+    const mainContent = document.getElementById('main-content');
+
+    if (newsData.length === 0) {
+      mainContent.innerHTML = '<h2>📰 Новости игры</h2><p>Нет доступных новостей.</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+      return;
+    }
+
+    let html = '<h2>📰 Новости игры</h2>';
+
+    newsData.forEach(item => {
+      // Используем квадратные скобки для доступа к ключам, чтобы избежать проблем с пробелами
+      const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
+      const summary = item['summary_ru'] || item['summary'] || '';
+      const date = item['date'] || '';
+      const url = item['url'] || '#';
+
+      html += `
+        <div class="news-item">
+          <h3>${title}</h3>
+          <p>${summary}</p>
+          <small>${date}</small>
+          <a href="${url}" target="_blank">🔗 Читать далее</a>
+        </div>
+      `;
+    });
+
+    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+    mainContent.innerHTML = html;
+
+  } catch (error) {
+    console.error('Ошибка при отображении новостей:', error);
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+  }
 }
 
 // --- Отображение событий ---
@@ -291,6 +351,3 @@ async function registerStreamer() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
-
-
-
