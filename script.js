@@ -3,26 +3,26 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
-  "Dam": "Плотина",
-  "Buried City": "Закопанный город",
-  "Spaceport": "Космопорт",
-  "Blue Gate": "Синие врата",
-  "Stella Montis": "Стелла Монтис"
+ "Dam ": "Плотина ",
+ "Buried City ": "Закопанный город ",
+ "Spaceport ": "Космопорт ",
+ "Blue Gate ": "Синие врата ",
+ "Stella Montis ": "Стелла Монтис "
 };
 const EVENT_TRANSLATIONS = {
-  "Night Raid": "Ночной налёт",
-  "Harvester": "Жнец",
-  "Matriarch": "Матриарх",
-  "Cold Snap": "Холодная волна",
-  "Electromagnetic Storm": "Электромагнитная буря",
-  "Launch Tower Loot": "Добыча с пусковой башни",
-  "Hidden Bunker": "Скрытый бункер",
-  "Husk Graveyard": "Кладбище Хасков",
-  "Prospecting Probes": "Геологические зонды",
-  "Uncovered Caches": "Обнаруженные тайники",
-  "Lush Blooms": "Пышные цветения",
-  "Locked Gate": "Закрытые врата",
-  "Bird City": "Птичий город"
+ "Night Raid ": "Ночной налёт ",
+ "Harvester ": "Жнец ",
+ "Matriarch ": "Матриарх ",
+ "Cold Snap ": "Холодная волна ",
+ "Electromagnetic Storm ": "Электромагнитная буря ",
+ "Launch Tower Loot ": "Добыча с пусковой башни ",
+ "Hidden Bunker ": "Скрытый бункер ",
+ "Husk Graveyard ": "Кладбище Хасков ",
+ "Prospecting Probes ": "Геологические зонды ",
+ "Uncovered Caches ": "Обнаруженные тайники ",
+ "Lush Blooms ": "Пышные цветения ",
+ "Locked Gate ": "Закрытые врата ",
+ "Bird City ": "Птичий город "
 };
 
 // --- Функция для загрузки событий ---
@@ -88,32 +88,32 @@ function parseTimeStr(str) {
 
 function getMapIcon(map) {
   const icons = {
-    "Dam": "💧",
-    "Buried City": "🏙️",
-    "Spaceport": "🚀",
-    "Blue Gate": "🔵",
-    "Stella Montis": "⛰️"
+    "Dam ": "💧 ",
+    "Buried City ": "🏙️ ",
+    "Spaceport ": "🚀 ",
+    "Blue Gate ": "🔵 ",
+    "Stella Montis ": "⛰️ "
   };
-  return icons[map] || "📍";
+  return icons[map] || "📍 ";
 }
 
 function getEventIcon(name) {
   const icons = {
-    "Night Raid": "🌙",
-    "Harvester": "🪴",
-    "Matriarch": "👑",
-    "Cold Snap": "❄️",
-    "Electromagnetic Storm": "⚡",
-    "Launch Tower Loot": "🎯",
-    "Hidden Bunker": "🔒",
-    "Husk Graveyard": "💀",
-    "Prospecting Probes": "📡",
-    "Uncovered Caches": "📦",
-    "Lush Blooms": "🌿",
-    "Locked Gate": "🚪",
-    "Bird City": "🐦"
+    "Night Raid ": "🌙 ",
+    "Harvester ": "🪴 ",
+    "Matriarch ": "👑 ",
+    "Cold Snap ": "❄️ ",
+    "Electromagnetic Storm ": "⚡ ",
+    "Launch Tower Loot ": "🎯 ",
+    "Hidden Bunker ": "🔒 ",
+    "Husk Graveyard ": "💀 ",
+    "Prospecting Probes ": "📡 ",
+    "Uncovered Caches ": "📦 ",
+    "Lush Blooms ": "🌿 ",
+    "Locked Gate ": "🚪 ",
+    "Bird City ": "🐦 "
   };
-  return icons[name] || "❓";
+  return icons[name] || "❓ ";
 }
 
 // --- Функция применения фильтров ---
@@ -121,13 +121,11 @@ function applyFilters() {
   const mapFilter = document.getElementById('filter-map').value;
   const eventFilter = document.getElementById('filter-event').value;
   const allEventCards = document.querySelectorAll('.event-card');
-
   allEventCards.forEach(card => {
     const eventName = card.querySelector('.event-name').textContent.trim();
     const fullLocationText = card.querySelector('.event-location').textContent.trim();
     const locationParts = fullLocationText.split(' ');
     const originalLocation = locationParts.slice(1).join(' ');
-
     const translatedLocation = MAP_TRANSLATIONS[originalLocation] || originalLocation;
     const translatedEventName = EVENT_TRANSLATIONS[eventName] || eventName;
 
@@ -188,9 +186,7 @@ async function showNews() {
     let html = '<h2>📰 Новости игры</h2>';
 
     newsData.forEach(item => {
-      // Используем квадратные скобки для доступа к ключам (защита от пробелов)
       const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
-      // Заменяем \n на <br> для красивого форматирования
       const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, '<br>');
       const date = item['date'] || '';
       const url = item['url'] || '#';
