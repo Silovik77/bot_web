@@ -3,26 +3,27 @@ const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
- "Dam ": "Плотина ",
- "Buried City ": "Закопанный город ",
- "Spaceport ": "Космопорт ",
- "Blue Gate ": "Синие врата ",
- "Stella Montis ": "Стелла Монтис "
+  "Dam": "Плотина",
+  "Buried City": "Закопанный город",
+  "Spaceport": "Космопорт",
+  "Blue Gate": "Синие врата",
+  "Stella Montis": "Стелла Монтис"
 };
+
 const EVENT_TRANSLATIONS = {
- "Night Raid ": "Ночной налёт ",
- "Harvester ": "Жнец ",
- "Matriarch ": "Матриарх ",
- "Cold Snap ": "Холодная волна ",
- "Electromagnetic Storm ": "Электромагнитная буря ",
- "Launch Tower Loot ": "Добыча с пусковой башни ",
- "Hidden Bunker ": "Скрытый бункер ",
- "Husk Graveyard ": "Кладбище Хасков ",
- "Prospecting Probes ": "Геологические зонды ",
- "Uncovered Caches ": "Обнаруженные тайники ",
- "Lush Blooms ": "Пышные цветения ",
- "Locked Gate ": "Закрытые врата ",
- "Bird City ": "Птичий город "
+  "Night Raid": "Ночной налёт",
+  "Harvester": "Жнец",
+  "Matriarch": "Матриарх",
+  "Cold Snap": "Холодная волна",
+  "Electromagnetic Storm": "Электромагнитная буря",
+  "Launch Tower Loot": "Добыча с пусковой башни",
+  "Hidden Bunker": "Скрытый бункер",
+  "Husk Graveyard": "Кладбище Хасков",
+  "Prospecting Probes": "Геологические зонды",
+  "Uncovered Caches": "Обнаруженные тайники",
+  "Lush Blooms": "Пышные цветения",
+  "Locked Gate": "Закрытые врата",
+  "Bird City": "Птичий город"
 };
 
 // --- Функция для загрузки событий ---
@@ -57,7 +58,8 @@ async function loadNews() {
   } catch (error) {
     console.error('Ошибка при загрузке новостей:', error);
     return []; // Возвращаем пустой массив в случае ошибки
-}
+  }
+} // <-- Закрывающая скобка для функции loadNews
 
 // --- Вспомогательные функции ---
 function formatTimeMs(ms) {
@@ -88,49 +90,55 @@ function parseTimeStr(str) {
 
 function getMapIcon(map) {
   const icons = {
-    "Dam ": "💧 ",
-    "Buried City ": "🏙️ ",
-    "Spaceport ": "🚀 ",
-    "Blue Gate ": "🔵 ",
-    "Stella Montis ": "⛰️ "
+    "Dam": "💧",
+    "Buried City": "🏙️",
+    "Spaceport": "🚀",
+    "Blue Gate": "🔵",
+    "Stella Montis": "⛰️"
   };
-  return icons[map] || "📍 ";
+  return icons[map] || "📍";
 }
 
 function getEventIcon(name) {
   const icons = {
-    "Night Raid ": "🌙 ",
-    "Harvester ": "🪴 ",
-    "Matriarch ": "👑 ",
-    "Cold Snap ": "❄️ ",
-    "Electromagnetic Storm ": "⚡ ",
-    "Launch Tower Loot ": "🎯 ",
-    "Hidden Bunker ": "🔒 ",
-    "Husk Graveyard ": "💀 ",
-    "Prospecting Probes ": "📡 ",
-    "Uncovered Caches ": "📦 ",
-    "Lush Blooms ": "🌿 ",
-    "Locked Gate ": "🚪 ",
-    "Bird City ": "🐦 "
+    "Night Raid": "🌙",
+    "Harvester": "🪴",
+    "Matriarch": "👑",
+    "Cold Snap": "❄️",
+    "Electromagnetic Storm": "⚡",
+    "Launch Tower Loot": "🎯",
+    "Hidden Bunker": "🔒",
+    "Husk Graveyard": "💀",
+    "Prospecting Probes": "📡",
+    "Uncovered Caches": "📦",
+    "Lush Blooms": "🌿",
+    "Locked Gate": "🚪",
+    "Bird City": "🐦"
   };
-  return icons[name] || "❓ ";
+  return icons[name] || "❓";
 }
 
 // --- Функция применения фильтров ---
 function applyFilters() {
-  const mapFilter = document.getElementById('filter-map').value;
-  const eventFilter = document.getElementById('filter-event').value;
+  const mapFilter = document.getElementById('filter-map')?.value;
+  const eventFilter = document.getElementById('filter-event')?.value;
   const allEventCards = document.querySelectorAll('.event-card');
+  
   allEventCards.forEach(card => {
-    const eventName = card.querySelector('.event-name').textContent.trim();
-    const fullLocationText = card.querySelector('.event-location').textContent.trim();
+    const eventNameElem = card.querySelector('.event-name');
+    const locationElem = card.querySelector('.event-location');
+    
+    if (!eventNameElem || !locationElem) return;
+    
+    const eventName = eventNameElem.textContent.trim();
+    const fullLocationText = locationElem.textContent.trim();
+    
+    // Убираем иконку из текста для сравнения
     const locationParts = fullLocationText.split(' ');
-    const originalLocation = locationParts.slice(1).join(' ');
-    const translatedLocation = MAP_TRANSLATIONS[originalLocation] || originalLocation;
-    const translatedEventName = EVENT_TRANSLATIONS[eventName] || eventName;
-
-    const matchesMap = !mapFilter || translatedLocation === mapFilter;
-    const matchesEvent = !eventFilter || translatedEventName === eventFilter;
+    const locationText = locationParts.slice(1).join(' ').trim();
+    
+    const matchesMap = !mapFilter || locationText === mapFilter;
+    const matchesEvent = !eventFilter || eventName === eventFilter;
 
     if (matchesMap && matchesEvent) {
       card.style.display = 'flex';
@@ -141,35 +149,35 @@ function applyFilters() {
 }
 
 // --- Отображение главного меню ---
-function showMainMenu() {
+window.showMainMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
-      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+      <button class="menu-btn" onclick="window.showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="window.showStreamersForm()">Стримерам</button>
       <button class="menu-btn" onclick="alert('Клан NE — в разработке')">Клан NE</button>
       <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
       <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
     </div>
   `;
-}
+};
 
 // --- Отображение меню Arc Raiders ---
-function showArcRaidersMenu() {
+window.showArcRaidersMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-    <button class="submenu-btn" onclick="showEvents()">События</button>
-    <button class="submenu-btn" onclick="showNews()">Обновления</button>
-    <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">Гайды</button>
-    <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">Испытание</button>
-    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+    <button class="submenu-btn" onclick="window.showEvents()">События</button>
+    <button class="submenu-btn" onclick="window.showNews()">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
   `;
-}
+};
 
 // --- Отображение новостей ---
-async function showNews() {
+window.showNews = async function() {
   try {
     const newsData = await loadNews();
     const mainContent = document.getElementById('main-content');
@@ -178,7 +186,7 @@ async function showNews() {
       mainContent.innerHTML = `
         <h2>📰 Новости игры</h2>
         <p>Нет доступных новостей.</p>
-        <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+        <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
       `;
       return;
     }
@@ -195,13 +203,13 @@ async function showNews() {
         <div class="news-item">
           <h3>${title}</h3>
           <p>${summary}</p>
-          <small>${date}</small>
+          <small>${date}</small><br>
           <a href="${url}" target="_blank">🔗 Читать далее</a>
         </div>
       `;
     });
 
-    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
 
   } catch (error) {
@@ -209,13 +217,13 @@ async function showNews() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
     `;
   }
-}
+};
 
 // --- Отображение событий ---
-async function showEvents() {
+window.showEvents = async function() {
   try {
     const rawData = await loadEvents();
     let activeEvents = [];
@@ -314,40 +322,54 @@ async function showEvents() {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
     }
 
-    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
 
-    document.getElementById('filter-map')?.addEventListener('change', applyFilters);
-    document.getElementById('filter-event')?.addEventListener('change', applyFilters);
+    // Добавляем обработчики после того, как элементы появились в DOM
+    setTimeout(() => {
+      document.getElementById('filter-map')?.addEventListener('change', applyFilters);
+      document.getElementById('filter-event')?.addEventListener('change', applyFilters);
+    }, 0);
+    
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
     `;
   }
-}
+};
 
 // --- Отображение формы для стримеров ---
-function showStreamersForm() {
+window.showStreamersForm = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    📺 Стримерам
-    Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.
-    <label for="channel-id">ID вашего Telegram-канала:</label>
-    <input type="text" id="channel-id" placeholder="Например: 123456789" required>
-    <label for="twitch-url">Ссылка на Twitch/YouTube:</label>
-    <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required>
-    <button type="submit" class="submenu-btn" onclick="registerStreamer()">Подключить</button>
-    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+    <h2>📺 Стримерам</h2>
+    <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
+    <div style="margin: 20px 0;">
+      <label for="channel-id">ID вашего Telegram-канала:</label><br>
+      <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
+    </div>
+    <div style="margin: 20px 0;">
+      <label for="twitch-url">Ссылка на Twitch/YouTube:</label><br>
+      <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
+    </div>
+    <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
   `;
-}
+};
 
 // --- Регистрация стримера ---
-async function registerStreamer() {
+window.registerStreamer = async function() {
   const channelId = document.getElementById('channel-id')?.value || '';
   const twitchUrl = document.getElementById('twitch-url')?.value || '';
+  
+  if (!channelId || !twitchUrl) {
+    alert('❌ Пожалуйста, заполните все поля');
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_URL}/api/register_streamer`, {
       method: 'POST',
@@ -358,7 +380,7 @@ async function registerStreamer() {
     if (response.ok) {
       const result = await response.json();
       alert(result.message || '✅ Вы успешно подключили бота!');
-      showMainMenu();
+      window.showMainMenu();
     } else {
       const error = await response.json();
       alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
@@ -367,11 +389,9 @@ async function registerStreamer() {
     console.error('Ошибка при подключении:', error);
     alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
   }
-}
+};
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
-  showMainMenu();
+  window.showMainMenu();
 });
-
-
