@@ -373,3 +373,4 @@ async function registerStreamer() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
