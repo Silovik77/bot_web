@@ -1,6 +1,6 @@
 // Укажите ваш реальный URL Amvera (без пробелов!)
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
-const BOT_USERNAME = "@gynecologistkrd_bot";
+const BOT_USERNAME = "gynecologistkrd_bot";
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
  "Dam ":  "Плотина ",
@@ -379,3 +379,4 @@ function openBotChatAndSendCommand(command) {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
