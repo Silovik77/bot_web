@@ -40,26 +40,6 @@ async function loadEvents() {
   }
 }
 
-// --- Функция для загрузки новостей ---
-async function loadNews() {
-  try {
-    const response = await fetch(`${API_URL}/api/updates`);
-    if (!response.ok) {
-      throw new Error(`Ошибка сервера при загрузке новостей: ${response.status}`);
-    }
-    const rawData = await response.json();
-    // Проверяем, что поле updates — это массив
-    if (!Array.isArray(rawData.updates)) {
-      console.warn('⚠️ Поле "updates" в ответе от API не является массивом.', rawData);
-      return [];
-    }
-    return rawData.updates;
-  } catch (error) {
-    console.error('Ошибка при загрузке новостей:', error);
-    return []; // Возвращаем пустой массив в случае ошибки
-}
-}
-
 // --- Вспомогательные функции ---
 function formatTimeMs(ms) {
   const sec = Math.floor(ms / 1000);
@@ -307,6 +287,74 @@ async function showEvents() {
   }
 }
 
+// --- Отображение раздела Клан NE ---
+async function showClanNEPage() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `<h2>⚔️ Клан NE</h2><p>Загрузка информации...</p>`;
+
+  try {
+    const response = await fetch(`${API_URL}/api/clan_info`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+
+    let html = `<h2>⚔️ Клан NE</h2>`;
+
+    // 1. Текст о клане
+    html += `<p>${data.clan_info_text}</p>`;
+
+    // 2. Кнопка "Подать заявку"
+    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/YOUR_INVITE_CODE', '_blank')">
+      ➕ Подать заявку в клан
+    </button>`;
+
+    // 3. Кнопка "Подписаться на уведомления"
+    // NOTE: Так как веб-интерфейс не может напрямую взаимодействовать с ботом,
+    //       мы просто откроем чат и подскажем команду.
+    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="openBotChatAndSendCommand('/ne_subscribe')">
+      📢 Подписаться на уведомления о мероприятиях
+    </button>`;
+
+    // 4. Розыгрыши (если есть)
+    if (data.has_givs) {
+      html += `<h3>🎁 Розыгрыши:</h3>`;
+      data.givs.forEach(giv => {
+        html += `<div class="news-item"><p>${giv.description}</p></div>`;
+      });
+    }
+
+    // 5. Мероприятия (если есть)
+    if (data.has_events) {
+      html += `<h3>📋 Мероприятия:</h3>`;
+      data.events.forEach(event => {
+        html += `<div class="news-item"><p>${event.description}</p></div>`;
+      });
+    } else {
+      html += `<p>На данный момент нет запланированных мероприятий.</p>`;
+    }
+
+    html += `<button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+    mainContent.innerHTML = html;
+
+  } catch (error) {
+    console.error('Ошибка загрузки информации о клане:', error);
+    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+  }
+}
+
+// --- Вспомогательная функция для подписки ---
+function openBotChatAndSendCommand(command) {
+  // Открывает чат с ботом в Telegram
+  window.open(`https://t.me/${BOT_USERNAME}`, '_blank');
+  // Примечание: Автоматическая отправка команды через веб-интерфейс невозможна из соображений безопасности Telegram.
+  // Пользователь должен вручную ввести команду в чате бота.
+  // Мы просто информируем пользователя.
+  setTimeout(() => {
+    alert(`Пожалуйста, введите в чате бота команду: ${command}`);
+  }, 1000); // Небольшая задержка, чтобы окно открылось
+}
+
 // --- Отображение формы для стримеров ---
 function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
@@ -346,55 +394,6 @@ async function registerStreamer() {
     alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
   }
 }
-
-// --- НОВАЯ ФУНКЦИЯ: Отображение раздела Клан NE (с автоматическим сообщением из Discord) ---
-async function showClanNEPage() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<h2>⚔️ Клан NE</h2><p>Загрузка информации о мероприятии...</p>`;
-
-  try {
-    // Загружаем данные с API
-    const response = await fetch(`${API_URL}/api/clan_event`);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
-
-    if (data.has_event) {
-      // Показываем мероприятие
-      mainContent.innerHTML = `
-        <h2>⚔️ Клан NE</h2>
-        <h3>📢 Ближайшее мероприятие:</h3>
-        <div style="background:#e8f4fd; padding:16px; border-radius:8px; margin:16px 0; border-left: 4px solid #3498db;">
-          ${data.description.replace(/\n/g, '<br>')} <!-- Преобразуем \n в <br> -->
-        </div>
-        <button class="submenu-btn" style="background:#2ecc71;" onclick="window.open('https://discord.gg/YOUR_INVITE_CODE', '_blank')">
-          ➕ Подать заявку в клан
-        </button>
-        <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
-      `;
-    } else {
-      // Показываем заглушку
-      mainContent.innerHTML = `
-        <h2>⚔️ Клан NE</h2>
-        <p>На данный момент нет информации о предстоящем мероприятии.</p>
-        <button class="submenu-btn" style="background:#2ecc71;" onclick="window.open('https://discord.gg/YOUR_INVITE_CODE', '_blank')">
-          ➕ Подать заявку в клан
-        </button>
-        <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
-      `;
-    }
-  } catch (error) {
-    console.error('Ошибка загрузки мероприятия из клана:', error);
-    mainContent.innerHTML = `
-      <h2>⚔️ Клан NE</h2>
-      <p style="color:red;">❌ Не удалось загрузить информацию о мероприятии.</p>
-      <p>Проверьте логи бота.</p>
-      <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
-    `;
-  }
-}
-
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
