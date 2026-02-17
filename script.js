@@ -1,28 +1,28 @@
 // Укажите ваш реальный URL Amvera (без пробелов!)
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
-
+const BOT_USERNAME = "@gynecologistkrd_bot";
 // --- Словари перевода ---
 const MAP_TRANSLATIONS = {
- "Dam": "Плотина",
- "Buried City": "Закопанный город",
- "Spaceport": "Космопорт",
- "Blue Gate": "Синие врата",
- "Stella Montis": "Стелла Монтис"
+ "Dam ":  "Плотина ",
+ "Buried City ":  "Закопанный город ",
+ "Spaceport ":  "Космопорт ",
+ "Blue Gate ":  "Синие врата ",
+ "Stella Montis ":  "Стелла Монтис "
 };
 const EVENT_TRANSLATIONS = {
- "Night Raid": "Ночной налёт",
- "Harvester": "Жнец",
- "Matriarch": "Матриарх",
- "Cold Snap": "Холодная волна",
- "Electromagnetic Storm": "Электромагнитная буря",
- "Launch Tower Loot": "Добыча с пусковой башни",
- "Hidden Bunker": "Скрытый бункер",
- "Husk Graveyard": "Кладбище Хасков",
- "Prospecting Probes": "Геологические зонды",
- "Uncovered Caches": "Обнаруженные тайники",
- "Lush Blooms": "Пышные цветения",
- "Locked Gate": "Закрытые врата",
- "Bird City": "Птичий город"
+ "Night Raid ":  "Ночной налёт ",
+ "Harvester ":  "Жнец ",
+ "Matriarch ":  "Матриарх ",
+ "Cold Snap ":  "Холодная волна ",
+ "Electromagnetic Storm ":  "Электромагнитная буря ",
+ "Launch Tower Loot ":  "Добыча с пусковой башни ",
+ "Hidden Bunker ":  "Скрытый бункер ",
+ "Husk Graveyard ":  "Кладбище Хасков ",
+ "Prospecting Probes ":  "Геологические зонды ",
+ "Uncovered Caches ":  "Обнаруженные тайники ",
+ "Lush Blooms ":  "Пышные цветения ",
+ "Locked Gate ":  "Закрытые врата ",
+ "Bird City ":  "Птичий город "
 };
 
 // --- Функция для загрузки событий ---
@@ -37,6 +37,26 @@ async function loadEvents() {
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     throw error;
+  }
+}
+
+// --- Функция для загрузки новостей ---
+async function loadNews() {
+  try {
+    const response = await fetch(`${API_URL}/api/updates`);
+    if (!response.ok) {
+      throw new Error(`Ошибка сервера при загрузке новостей: ${response.status}`);
+    }
+    const rawData = await response.json();
+    // Проверяем, что поле updates — это массив
+    if (!Array.isArray(rawData.updates)) {
+      console.warn('⚠️ Поле "updates" в ответе от API не является массивом.', rawData);
+      return [];
+    }
+    return rawData.updates;
+  } catch (error) {
+    console.error('Ошибка при загрузке новостей:', error);
+    return []; // Возвращаем пустой массив в случае ошибки
   }
 }
 
@@ -69,32 +89,32 @@ function parseTimeStr(str) {
 
 function getMapIcon(map) {
   const icons = {
-    "Dam": "💧",
-    "Buried City": "🏙️",
-    "Spaceport": "🚀",
-    "Blue Gate": "🔵",
-    "Stella Montis": "⛰️"
+    "Dam ":  "💧 ",
+    "Buried City ":  "🏙️ ",
+    "Spaceport ":  "🚀 ",
+    "Blue Gate ":  "🔵 ",
+    "Stella Montis ":  "⛰️ "
   };
-  return icons[map] || "📍";
+  return icons[map] || "📍 ";
 }
 
 function getEventIcon(name) {
   const icons = {
-    "Night Raid": "🌙",
-    "Harvester": "🪴",
-    "Matriarch": "👑",
-    "Cold Snap": "❄️",
-    "Electromagnetic Storm": "⚡",
-    "Launch Tower Loot": "🎯",
-    "Hidden Bunker": "🔒",
-    "Husk Graveyard": "💀",
-    "Prospecting Probes": "📡",
-    "Uncovered Caches": "📦",
-    "Lush Blooms": "🌿",
-    "Locked Gate": "🚪",
-    "Bird City": "🐦"
+    "Night Raid ":  "🌙 ",
+    "Harvester ":  "🪴 ",
+    "Matriarch ":  "👑 ",
+    "Cold Snap ":  "❄️ ",
+    "Electromagnetic Storm ":  "⚡ ",
+    "Launch Tower Loot ":  "🎯 ",
+    "Hidden Bunker ":  "🔒 ",
+    "Husk Graveyard ":  "💀 ",
+    "Prospecting Probes ":  "📡 ",
+    "Uncovered Caches ":  "📦 ",
+    "Lush Blooms ":  "🌿 ",
+    "Locked Gate ":  "🚪 ",
+    "Bird City ":  "🐦 "
   };
-  return icons[name] || "❓";
+  return icons[name] || "❓ ";
 }
 
 // --- Функция применения фильтров ---
@@ -102,13 +122,11 @@ function applyFilters() {
   const mapFilter = document.getElementById('filter-map').value;
   const eventFilter = document.getElementById('filter-event').value;
   const allEventCards = document.querySelectorAll('.event-card');
-
   allEventCards.forEach(card => {
     const eventName = card.querySelector('.event-name').textContent.trim();
     const fullLocationText = card.querySelector('.event-location').textContent.trim();
     const locationParts = fullLocationText.split(' ');
     const originalLocation = locationParts.slice(1).join(' ');
-
     const translatedLocation = MAP_TRANSLATIONS[originalLocation] || originalLocation;
     const translatedEventName = EVENT_TRANSLATIONS[eventName] || eventName;
 
@@ -132,7 +150,7 @@ function showMainMenu() {
 // --- Отображение меню Arc Raiders ---
 function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<h2>🎮 Arc Raiders</h2><button class="submenu-btn" onclick="showEvents()">События</button><button class="submenu-btn" onclick="showNews()">Обновления</button><button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button><button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+  mainContent.innerHTML = `<h2>🎮 Arc Raiders</h2><button class="submenu-btn" onclick="showEvents()">События</button><button class="submenu-btn" onclick="showNews()">Обновления</button><button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">Гайды</button><button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">Испытание</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
 }
 
 // --- Отображение новостей ---
@@ -140,16 +158,18 @@ async function showNews() {
   try {
     const newsData = await loadNews();
     const mainContent = document.getElementById('main-content');
-
     if (newsData.length === 0) {
-      mainContent.innerHTML = '<h2>📰 Новости игры</h2><p>Нет доступных новостей.</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
+      mainContent.innerHTML = `
+        <h2>📰 Новости игры</h2>
+        <p>Нет доступных новостей.</p>
+        <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
+      `;
       return;
     }
 
     let html = '<h2>📰 Новости игры</h2>';
 
     newsData.forEach(item => {
-      // Используем квадратные скобки для доступа к ключам (защита от пробелов)
       const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
       const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, '<br>');
       const date = item['date'] || '';
@@ -167,7 +187,6 @@ async function showNews() {
 
     html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
-
   } catch (error) {
     console.error('Ошибка при отображении новостей:', error);
     const mainContent = document.getElementById('main-content');
@@ -287,74 +306,6 @@ async function showEvents() {
   }
 }
 
-// --- Отображение раздела Клан NE ---
-async function showClanNEPage() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `<h2>⚔️ Клан NE</h2><p>Загрузка информации...</p>`;
-
-  try {
-    const response = await fetch(`${API_URL}/api/clan_info`);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
-
-    let html = `<h2>⚔️ Клан NE</h2>`;
-
-    // 1. Текст о клане
-    html += `<p>${data.clan_info_text}</p>`;
-
-    // 2. Кнопка "Подать заявку"
-    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/YOUR_INVITE_CODE', '_blank')">
-      ➕ Подать заявку в клан
-    </button>`;
-
-    // 3. Кнопка "Подписаться на уведомления"
-    // NOTE: Так как веб-интерфейс не может напрямую взаимодействовать с ботом,
-    //       мы просто откроем чат и подскажем команду.
-    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="openBotChatAndSendCommand('/ne_subscribe')">
-      📢 Подписаться на уведомления о мероприятиях
-    </button>`;
-
-    // 4. Розыгрыши (если есть)
-    if (data.has_givs) {
-      html += `<h3>🎁 Розыгрыши:</h3>`;
-      data.givs.forEach(giv => {
-        html += `<div class="news-item"><p>${giv.description}</p></div>`;
-      });
-    }
-
-    // 5. Мероприятия (если есть)
-    if (data.has_events) {
-      html += `<h3>📋 Мероприятия:</h3>`;
-      data.events.forEach(event => {
-        html += `<div class="news-item"><p>${event.description}</p></div>`;
-      });
-    } else {
-      html += `<p>На данный момент нет запланированных мероприятий.</p>`;
-    }
-
-    html += `<button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
-    mainContent.innerHTML = html;
-
-  } catch (error) {
-    console.error('Ошибка загрузки информации о клане:', error);
-    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
-  }
-}
-
-// --- Вспомогательная функция для подписки ---
-function openBotChatAndSendCommand(command) {
-  // Открывает чат с ботом в Telegram
-  window.open(`https://t.me/${BOT_USERNAME}`, '_blank');
-  // Примечание: Автоматическая отправка команды через веб-интерфейс невозможна из соображений безопасности Telegram.
-  // Пользователь должен вручную ввести команду в чате бота.
-  // Мы просто информируем пользователя.
-  setTimeout(() => {
-    alert(`Пожалуйста, введите в чате бота команду: ${command}`);
-  }, 1000); // Небольшая задержка, чтобы окно открылось
-}
-
 // --- Отображение формы для стримеров ---
 function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
@@ -393,6 +344,35 @@ async function registerStreamer() {
     console.error('Ошибка при подключении:', error);
     alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
   }
+}
+
+// --- Отображение раздела Клан NE ---
+function showClanNEPage() {
+  const mainContent = document.getElementById('main-content');
+  // 📌 Текст о клане (вы можете легко изменить)
+  const clanInfoText = "Клан 'NE' — элитный отряд ARC Raiders. Основан в 2025 году. Глава клана — Невский. Наша цель — завоевание Ржавого пояса и защита интересов рейдеров.";
+  // 📌 Ссылка на Discord (замените на свою)
+  const discordInviteLink = "discord.gg/nevskiy";
+
+  mainContent.innerHTML = `
+    <h2>⚔️ Клан NE</h2>
+    <p>${clanInfoText}</p>
+    <button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('${discordInviteLink}', '_blank')">
+      ➕ Подать заявку в клан
+    </button>
+    <button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="openBotChatAndSendCommand('/ne_subscribe')">
+      📢 Подписаться на уведомления о мероприятиях
+    </button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+  `;
+}
+
+// --- Вспомогательная функция для подписки ---
+function openBotChatAndSendCommand(command) {
+  window.open(`https://t.me/${BOT_USERNAME}`, '_blank');
+  setTimeout(() => {
+    alert(`Пожалуйста, введите в чате бота команду: ${command}`);
+  }, 1000);
 }
 
 // --- Инициализация ---
