@@ -1,7 +1,7 @@
 // Укажите ваш реальный URL Amvera (без пробелов!)
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
-// --- Словари перевода (БЕЗ ПРОБЕЛОВ В КЛЮЧАХ!) ---
+// --- Словари перевода ---
 const MAP_TRANSLATIONS = {
   "Dam": "Плотина",
   "Buried City": "Закопанный город",
@@ -9,7 +9,6 @@ const MAP_TRANSLATIONS = {
   "Blue Gate": "Синие врата",
   "Stella Montis": "Стелла Монтис"
 };
-
 const EVENT_TRANSLATIONS = {
   "Night Raid": "Ночной налёт",
   "Harvester": "Жнец",
@@ -49,6 +48,7 @@ async function loadNews() {
       throw new Error(`Ошибка сервера при загрузке новостей: ${response.status}`);
     }
     const rawData = await response.json();
+    // Проверяем, что поле updates — это массив
     if (!Array.isArray(rawData.updates)) {
       console.warn('⚠️ Поле "updates" в ответе от API не является массивом.', rawData);
       return [];
@@ -56,22 +56,6 @@ async function loadNews() {
     return rawData.updates;
   } catch (error) {
     console.error('Ошибка при загрузке новостей:', error);
-    return [];
-  }
-}
-
-// --- Функция для загрузки событий клана NE ---
-async function loadClanEvents() {
-  try {
-    const response = await fetch(`${API_URL}/api/clan_events`);
-    if (!response.ok) {
-      // Если эндпоинт не существует, возвращаем пустой массив
-      return [];
-    }
-    const data = await response.json();
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error('Ошибка при загрузке событий клана:', error);
     return [];
   }
 }
@@ -133,41 +117,21 @@ function getEventIcon(name) {
   return icons[name] || "❓";
 }
 
-function formatEventDate(dateStr) {
-  if (!dateStr) return 'Дата не указана';
-  try {
-    const date = new Date(dateStr);
-    if (!isNaN(date.getTime())) {
-      return date.toLocaleString('ru-RU', {
-        day: 'numeric',
-        month: 'long',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-  } catch (e) {}
-  return dateStr;
-}
-
 // --- Функция применения фильтров ---
 function applyFilters() {
-  const mapFilter = document.getElementById('filter-map')?.value;
-  const eventFilter = document.getElementById('filter-event')?.value;
+  const mapFilter = document.getElementById('filter-map').value;
+  const eventFilter = document.getElementById('filter-event').value;
   const allEventCards = document.querySelectorAll('.event-card');
-  
   allEventCards.forEach(card => {
-    const eventNameElem = card.querySelector('.event-name');
-    const locationElem = card.querySelector('.event-location');
-    
-    if (!eventNameElem || !locationElem) return;
-    
-    const eventName = eventNameElem.textContent.trim();
-    const fullLocationText = locationElem.textContent.trim();
+    const eventName = card.querySelector('.event-name').textContent.trim();
+    const fullLocationText = card.querySelector('.event-location').textContent.trim();
     const locationParts = fullLocationText.split(' ');
-    const locationText = locationParts.slice(1).join(' ').trim();
-    
-    const matchesMap = !mapFilter || locationText === mapFilter;
-    const matchesEvent = !eventFilter || eventName === eventFilter;
+    const originalLocation = locationParts.slice(1).join(' ');
+    const translatedLocation = MAP_TRANSLATIONS[originalLocation] || originalLocation;
+    const translatedEventName = EVENT_TRANSLATIONS[eventName] || eventName;
+
+    const matchesMap = !mapFilter || translatedLocation === mapFilter;
+    const matchesEvent = !eventFilter || translatedEventName === eventFilter;
 
     if (matchesMap && matchesEvent) {
       card.style.display = 'flex';
@@ -177,45 +141,44 @@ function applyFilters() {
   });
 }
 
-// --- Отображение главного меню (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showMainMenu = function() {
+// --- Отображение главного меню ---
+function showMainMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
-      <button class="menu-btn" onclick="window.showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="window.showStreamersForm()">Стримерам</button>
-      <button class="menu-btn" onclick="window.showClanNe()">🏛 Клан NE</button>
+      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+      <button class="menu-btn" onclick="showClanNEPage()">Клан NE</button>
       <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
       <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
     </div>
   `;
-};
+}
 
-// --- Отображение меню Arc Raiders (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showArcRaidersMenu = function() {
+// --- Отображение меню Arc Raiders ---
+function showArcRaidersMenu() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-    <button class="submenu-btn" onclick="window.showEvents()">События</button>
-    <button class="submenu-btn" onclick="window.showNews()">Обновления</button>
-    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
-    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
+    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="showNews()">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">Испытание</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
-};
+}
 
-// --- Отображение новостей (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showNews = async function() {
+// --- Отображение новостей ---
+async function showNews() {
   try {
     const newsData = await loadNews();
     const mainContent = document.getElementById('main-content');
-
     if (newsData.length === 0) {
       mainContent.innerHTML = `
         <h2>📰 Новости игры</h2>
         <p>Нет доступных новостей.</p>
-        <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+        <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
       `;
       return;
     }
@@ -232,27 +195,26 @@ window.showNews = async function() {
         <div class="news-item">
           <h3>${title}</h3>
           <p>${summary}</p>
-          <small>${date}</small><br>
+          <small>${date}</small>
           <a href="${url}" target="_blank">🔗 Читать далее</a>
         </div>
       `;
     });
 
-    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
-
   } catch (error) {
     console.error('Ошибка при отображении новостей:', error);
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
     `;
   }
-};
+}
 
-// --- Отображение событий (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showEvents = async function() {
+// --- Отображение событий ---
+async function showEvents() {
   try {
     const rawData = await loadEvents();
     let activeEvents = [];
@@ -351,112 +313,40 @@ window.showEvents = async function() {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
     }
 
-    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
     mainContent.innerHTML = html;
 
-    setTimeout(() => {
-      document.getElementById('filter-map')?.addEventListener('change', applyFilters);
-      document.getElementById('filter-event')?.addEventListener('change', applyFilters);
-    }, 0);
-    
+    document.getElementById('filter-map')?.addEventListener('change', applyFilters);
+    document.getElementById('filter-event')?.addEventListener('change', applyFilters);
   } catch (error) {
     console.error('Ошибка при загрузке событий:', error);
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
     `;
   }
-};
+}
 
-// --- Отображение раздела Клан NE (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showClanNe = async function() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = '<h2>🏛 Клан NE</h2><p class="loading">Загрузка мероприятий...</p>';
-  
-  const events = await loadClanEvents();
-  
-  let html = `
-    <div class="clan-header">
-      <h2>🏛 Клан NE - Мероприятия</h2>
-      <p class="clan-description">Плановые сборы, рейды и другие активности клана</p>
-    </div>
-  `;
-  
-  if (events.length === 0) {
-    html += `
-      <div class="no-events">
-        <p>📭 Пока нет запланированных мероприятий</p>
-        <p class="small">Следите за объявлениями в Telegram</p>
-      </div>
-    `;
-  } else {
-    html += '<h3 class="section-title">📅 Мероприятия</h3>';
-    events.forEach(event => {
-      const formattedDate = formatEventDate(event.datetime_iso || event.datetime);
-      const icon = '📌';
-      html += `
-        <div class="clan-event-card">
-          <div class="event-icon">${icon}</div>
-          <div class="event-info">
-            <div class="event-name">${event.title || 'Мероприятие'}</div>
-            <div class="event-description">${event.description || 'Нет описания'}</div>
-            <div class="event-meta">
-              <span class="event-datetime">⏰ ${formattedDate}</span>
-              <span class="event-location">📍 ${event.location || 'Не указано'}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-  }
-  
-  html += `
-    <div class="clan-actions">
-      <p class="info-text">
-        🔔 Хотите получать уведомления о мероприятиях?<br>
-        Используйте команду <code>/ne_subscribe</code> в боте
-      </p>
-      <p class="info-text">
-        📝 Хотите вступить в клан?<br>
-        Используйте команду <code>/ne_join</code> в боте
-      </p>
-    </div>
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
-  `;
-  
-  mainContent.innerHTML = html;
-};
-
-// --- Отображение формы для стримеров (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.showStreamersForm = function() {
+// --- Отображение формы для стримеров ---
+function showStreamersForm() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <h2>📺 Стримерам</h2>
-    <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
-    <div style="margin: 20px 0;">
-      <label for="channel-id">ID вашего Telegram-канала:</label><br>
-      <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
-    </div>
-    <div style="margin: 20px 0;">
-      <label for="twitch-url">Ссылка на Twitch/YouTube:</label><br>
-      <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
-    </div>
-    <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
+    📺 Стримерам
+    Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.
+    <label for="channel-id">ID вашего Telegram-канала:</label>
+    <input type="text" id="channel-id" placeholder="Например: 123456789" required>
+    <label for="twitch-url">Ссылка на Twitch/YouTube:</label>
+    <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required>
+    <button type="submit" class="submenu-btn" onclick="registerStreamer()">Подключить</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
-};
+}
 
-// --- Регистрация стримера (ГЛОБАЛЬНАЯ ФУНКЦИЯ) ---
-window.registerStreamer = async function() {
+// --- Регистрация стримера ---
+async function registerStreamer() {
   const channelId = document.getElementById('channel-id')?.value || '';
   const twitchUrl = document.getElementById('twitch-url')?.value || '';
-  
-  if (!channelId || !twitchUrl) {
-    alert('❌ Пожалуйста, заполните все поля');
-    return;
-  }
-  
   try {
     const response = await fetch(`${API_URL}/api/register_streamer`, {
       method: 'POST',
@@ -467,7 +357,7 @@ window.registerStreamer = async function() {
     if (response.ok) {
       const result = await response.json();
       alert(result.message || '✅ Вы успешно подключили бота!');
-      window.showMainMenu();
+      showMainMenu();
     } else {
       const error = await response.json();
       alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
@@ -476,9 +366,27 @@ window.registerStreamer = async function() {
     console.error('Ошибка при подключении:', error);
     alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
   }
-};
+}
+
+// --- Отображение раздела Клан NE ---
+function showClanNEPage() {
+  const mainContent = document.getElementById('main-content');
+  const clanText = "Добро пожаловать";
+  const discordInviteLink = "https://discord.gg/nevskiy";
+
+  mainContent.innerHTML = `
+    <h2>⚔️ Клан NE</h2>
+    <p>${clanText}</p>
+    <button class="submenu-btn" style="background:#2ecc71; margin-top:20px;" onclick="window.open('${discordInviteLink}', '_blank')">
+      ➕ Подать заявку в клан
+    </button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">
+      Назад
+    </button>
+  `;
+}
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
-  window.showMainMenu();
+  showMainMenu();
 });
