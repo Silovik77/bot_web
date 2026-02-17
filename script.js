@@ -359,7 +359,7 @@ function showClanNEPage() {
   // 📌 Здесь вы можете легко изменить текст
   const clanText = "Добро пожаловать";
   // 📌 Замените ссылку на ваш Discord-приглашение
-  const discordInviteLink = "https://discord.gg/YOUR_INVITE_CODE"; // <- ИЗМЕНИТЕ ЭТУ ССЫЛКУ
+  const discordInviteLink = "https://discord.gg/nevskiy"; // <- ИЗМЕНИТЕ ЭТУ ССЫЛКУ
 
   mainContent.innerHTML = `
     <h2>⚔️ Клан NE</h2>
@@ -377,3 +377,4 @@ function showClanNEPage() {
 document.addEventListener('DOMContentLoaded', () => {
 showMainMenu();
 });
+
