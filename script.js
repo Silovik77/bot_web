@@ -58,6 +58,7 @@ return rawData.updates;
 console.error('Ошибка при загрузке новостей:', error);
 return []; // Возвращаем пустой массив в случае ошибки
 }
+} // <-- Закрывающая скобка для функции loadNews
 
 // --- Вспомогательные функции ---
 function formatTimeMs(ms) {
@@ -143,13 +144,29 @@ if (matchesMap && matchesEvent) {
 // --- Отображение главного меню ---
 function showMainMenu() {
 const mainContent = document.getElementById('main-content');
-mainContent.innerHTML =  `<p` `>Добро пожаловать! Выберите раздел в меню ниже.` `</p` `> ` `<div class=` `"main-menu` `"` `> ` `<button class=` `"menu-btn` `" onclick=` `"showArcRaidersMenu()` `"` `>Arc Raiders` `</button` `> ` `<button class=` `"menu-btn` `" onclick=` `"showStreamersForm()` `"` `>Стримерам` `</button` `> ` `<button class=` `"menu-btn` `" onclick=` `"showClanNEPage()` `"` `>Клан NE` `</button` `> ` `<button class=` `"menu-btn` `" onclick=` `"alert('Информация — в разработке')` `"` `>Информация` `</button` `> ` `<button class=` `"menu-btn` `" onclick=` `"alert('Обратная связь — в разработке')` `"` `>Обратная связь` `</button` `> ` `</div` `>` ;
+mainContent.innerHTML = `
+    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <div class="main-menu">
+      <button class="menu-btn" onclick="showArcRaidersMenu()">Arc Raiders</button>
+      <button class="menu-btn" onclick="showStreamersForm()">Стримерам</button>
+      <button class="menu-btn" onclick="showClanNEPage()">Клан NE</button>
+      <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
+      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
+    </div>
+  `;
 }
 
 // --- Отображение меню Arc Raiders ---
 function showArcRaidersMenu() {
 const mainContent = document.getElementById('main-content');
-mainContent.innerHTML =  `<h2` `>🎮 Arc Raiders` `</h2` `> ` `<button class=` `"submenu-btn` `" onclick=` `"showEvents()` `"` `>События` `</button` `> ` `<button class=` `"submenu-btn` `" onclick=` `"showNews()` `"` `>Обновления` `</button` `> ` `<button class=` `"submenu-btn` `" onclick=` `"alert('Раздел \\'Гайды\\' в разработке.')` `"` `>Гайды` `</button` `> ` `<button class=` `"submenu-btn` `" onclick=` `"alert('Раздел \\'Испытание\\' в разработке.')` `"` `>Испытание` `</button` `> ` `<button class=` `"submenu-btn back-btn` `" onclick=` `"showMainMenu()` `"` `>Назад` `</button` `>` ;
+mainContent.innerHTML = `
+    <h2>🎮 Arc Raiders</h2>
+    <button class="submenu-btn" onclick="showEvents()">События</button>
+    <button class="submenu-btn" onclick="showNews()">Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
+    <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
+  `;
 }
 
 // --- Отображение новостей ---
@@ -159,37 +176,40 @@ const newsData = await loadNews();
 const mainContent = document.getElementById('main-content');
 if (newsData.length === 0) {
   mainContent.innerHTML = `
-     <h2 >📰 Новости игры </h2 >
-     <p >Нет доступных новостей. </p >
-     <button class= "submenu-btn back-btn " onclick= "showArcRaidersMenu() " >Назад </button >
+     <h2>📰 Новости игры</h2>
+     <p>Нет доступных новостей.</p>
+     <button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>
   `;
   return;
 }
 
-let html = ' <h2 >📰 Новости игры </h2 >';
+let html = '<h2>📰 Новости игры</h2>';
 
-newsData.forEach(item = > {
+newsData.forEach(item => {
+  // Используем квадратные скобки для доступа к ключам (защита от пробелов)
   const title = item['title_ru'] || item['title'] || 'Заголовок недоступен';
-  const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, ' <br >');
+  // Заменяем \n на <br> для красивого форматирования
+  const summary = (item['summary_ru'] || item['summary'] || '').replace(/\n/g, '<br>');
   const date = item['date'] || '';
   const url = item['url'] || '#';
 
   html += `
-     <div class= "news-item " >
-       <h3 >${title} </h3 >
-       <p >${summary} </p >
-       <small >${date} </small >
-       <a href= "${url} " target= "_blank " >🔗 Читать далее </a >
-     </div >
+     <div class="news-item">
+       <h3>${title}</h3>
+       <p>${summary}</p>
+       <small>${date}</small>
+       <a href="${url}" target="_blank">🔗 Читать далее</a>
+     </div>
   `;
 });
 
-html += ' <button class= "submenu-btn back-btn " onclick= "showArcRaidersMenu() " >Назад </button >';
+html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
 mainContent.innerHTML = html;
 } catch (error) {
 console.error('Ошибка при отображении новостей:', error);
 const mainContent = document.getElementById('main-content');
-mainContent.innerHTML =  `<p style=` `"color: red;` `"` `>❌ Ошибка: ${error.message}` `</p` `> ` `<button class=` `"submenu-btn back-btn` `" onclick=` `"showArcRaidersMenu()` `"` `>Назад` `</button` `>` ;
+mainContent.innerHTML =  `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+}
 }
 
 // --- Отображение событий ---
@@ -198,7 +218,7 @@ try {
 const rawData = await loadEvents();
 let activeEvents = [];
 let upcomingEvents = [];
-if (Array.isArray(rawData.active)  & & Array.isArray(rawData.upcoming)) {
+if (Array.isArray(rawData.active)  && Array.isArray(rawData.upcoming)) {
   activeEvents = rawData.active;
   upcomingEvents = rawData.upcoming;
 } else if (Array.isArray(rawData.data)) {
@@ -207,105 +227,106 @@ if (Array.isArray(rawData.active)  & & Array.isArray(rawData.upcoming)) {
 
   for (const event of events) {
     const name = event.name || 'Неизвестное событие';
-    const location = event.map || 'Неизвестная карта'; 
+    const location = event.map || 'Неизвестная карта';
     const start = event.startTime;
     const end = event.endTime;
 
     if (!start || !end) continue;
 
-    if (start  <= currentTimestamp  & & currentTimestamp  < end) {
+    if (start  <= currentTimestamp  && currentTimestamp  < end) {
       const timeLeftMs = end - currentTimestamp;
       const timeLeftStr = formatTimeMs(timeLeftMs);
       activeEvents.push({ name, location, time_left: timeLeftStr });
      } else if (currentTimestamp  < start) {
       const timeToStartMs = start - currentTimestamp;
       const timeToStartStr = formatTimeMs(timeToStartMs);
-      upcomingEvents.push({ name, location, time_left: ti meToStartStr });
+      upcomingEvents.push({ name, location, time_left: timeToStartStr });
     }
   }
 } else {
   throw new Error( "Неизвестный формат ответа API ");
 }
 
-upcomingEvents.sort((a, b) = > parseTimeStr(a.time_left) - parseTimeStr(b.time_left));
+upcomingEvents.sort((a, b) => parseTimeStr(a.time_left) - parseTimeStr(b.time_left));
 
-const uniqueOriginalMaps = [...new Set([...activeEvents, ...upcomingEvents].map(e = > e.location))].sort();
-const uniqueOriginalEvents = [...new Set([...activeEvents, ...upcomingEvents].map(e = > e.name))].sort();
+const uniqueOriginalMaps = [...new Set([...activeEvents, ...upcomingEvents].map(e => e.location))].sort();
+const uniqueOriginalEvents = [...new Set([...activeEvents, ...upcomingEvents].map(e => e.name))].sort();
 
-const uniqueTranslatedMaps = uniqueOriginalMaps.map(original = > MAP_TRANSLATIONS[original] || original);
-const uniqueTranslatedEvents = uniqueOriginalEvents.map(original = > EVENT_TRANSLATIONS[original] || original);
+const uniqueTranslatedMaps = uniqueOriginalMaps.map(original => MAP_TRANSLATIONS[original] || original);
+const uniqueTranslatedEvents = uniqueOriginalEvents.map(original => EVENT_TRANSLATIONS[original] || original);
 
 const mainContent = document.getElementById('main-content');
-let html = ' <h2 >📅 События ARC Raiders </h2 >';
+let html = '<h2>📅 События ARC Raiders</h2>';
 
 html += `
-   <div class= "filters " >
-     <select id= "filter-map " >
-       <option value= " " >Все карты </option >
-      ${uniqueTranslatedMaps.map(m = > ` <option value= "${m} " >${m} </option >`).join('')}
-     </select >
-     <select id= "filter-event " >
-       <option value= " " >Все события </option >
-      ${uniqueTranslatedEvents.map(n = > ` <option value= "${n} " >${n} </option >`).join('')}
-     </select >
-   </div >
+   <div class="filters">
+     <select id="filter-map">
+       <option value="">Все карты</option>
+      ${uniqueTranslatedMaps.map(m => `<option value="${m}">${m}</option>`).join('')}
+     </select>
+     <select id="filter-event">
+       <option value="">Все события</option>
+      ${uniqueTranslatedEvents.map(n => `<option value="${n}">${n}</option>`).join('')}
+     </select>
+   </div>
 `;
 
 if (activeEvents.length  > 0) {
-  html += ' <h3 >🟢 Активные </h3 >';
-  activeEvents.forEach(e = > {
+  html += '<h3>🟢 Активные</h3>';
+  activeEvents.forEach(e => {
     const displayName = EVENT_TRANSLATIONS[e.name] || e.name;
     const displayLocation = MAP_TRANSLATIONS[e.location] || e.location;
     html += `
-       <div class= "event-card active " >
-         <div class= "event-icon " >${getEventIcon(e.name)} </div >
-         <div class= "event-info " >
-           <div class= "event-name " >${displayName} </div >
-           <div class= "event-location " >${getMapIcon(e.location)} ${displayLocation} </div >
-         </div >
-         <div class= "event-time " >⏱️ Осталось: ${e.time_left} </div >
-       </div >
+       <div class="event-card active">
+         <div class="event-icon">${getEventIcon(e.name)}</div>
+         <div class="event-info">
+           <div class="event-name">${displayName}</div>
+           <div class="event-location">${getMapIcon(e.location)} ${displayLocation}</div>
+         </div>
+         <div class="event-time">⏱️ Осталось: ${e.time_left}</div>
+       </div>
     `;
   });
 } else {
-  html += ' <p class= "no-data " >🟢 Нет активных событий </p >';
+  html += '<p class="no-data">🟢 Нет активных событий</p>';
 }
 
 if (upcomingEvents.length  > 0) {
-  html += ' <h3 >🔴 Предстоящие </h3 >';
-  upcomingEvents.forEach(e = > {
+  html += '<h3>🔴 Предстоящие</h3>';
+  upcomingEvents.forEach(e => {
     const displayName = EVENT_TRANSLATIONS[e.name] || e.name;
     const displayLocation = MAP_TRANSLATIONS[e.location] || e.location;
     html += `
-       <div class= "event-card upcoming " >
-         <div class= "event-icon " >${getEventIcon(e.name)} </div >
-         <div class= "event-info " >
-           <div class= "event-name " >${displayName} </div >
-           <div class= "event-location " >${getMapIcon(e.location)} ${displayLocation} </div >
-         </div >
-         <div class= "event-time " >⏱️ Начнётся через: ${e.time_left} </div >
-       </div >
+       <div class="event-card upcoming">
+         <div class="event-icon">${getEventIcon(e.name)}</div>
+         <div class="event-info">
+           <div class="event-name">${displayName}</div>
+           <div class="event-location">${getMapIcon(e.location)} ${displayLocation}</div>
+         </div>
+         <div class="event-time">⏱️ Начнётся через: ${e.time_left}</div>
+       </div>
     `;
   });
 } else {
-  html += ' <p class= "no-data " >🔴 Нет предстоящих событий </p >';
+  html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
 }
 
-html += ' <button class= "submenu-btn back-btn " onclick= "showArcRaidersMenu() " >Назад </button >';
+html += '<button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>';
 mainContent.innerHTML = html;
 
 document.getElementById('filter-map')?.addEventListener('change', applyFilters);
-document.getElementById('filter-event')?.addEventListener('chang e', applyFilters);
+document.getElementById('filter-event')?.addEventListener('change', applyFilters);
 } catch (error) {
 console.error('Ошибка при загрузке событий:', error);
 const mainContent = document.getElementById('main-content');
-mainContent.innerHTML =  `<p style=` `"color: red;` `"` `>❌ Ошибка: ${error.message}` `</p` `> ` `<button class=` `"submenu-btn back-btn` `" onclick=` `"showArcRaidersMenu()` `"` `>Назад` `</button` `>` ;
+mainContent.innerHTML =  `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showArcRaidersMenu()">Назад</button>`;
+}
 }
 
 // --- Отображение формы для стримеров ---
 function showStreamersForm() {
 const mainContent = document.getElementById('main-content');
-mainContent.innerHTML =  `📺 Стримерам Подключите бота к своему каналу, чтобы получать уведомления о начале стрима. ` `<label for=` `"channel-id` `"` `>ID вашего Telegram-канала:` `</label` `> ` `<input type=` `"text` `" id=` `"channel-id` `" placeholder=` `"Например: 123456789` `" required` `> ` `<label for=` `"twitch-url` `"` `>Ссылка на Twitch/YouTube:` `</label` `> ` `<input type=` `"url` `" id=` `"twitch-url` `" placeholder=` `"https://twitch.tv/your_name` `" required` `> ` `<button type=` `"submit` `" class=` `"submenu-btn` `" onclick=` `"registerStreamer()` `"` `>Подключить` `</button` `> ` `<button class=` `"submenu-btn back-btn` `" onclick=` `"showMainMenu()` `"` `>Назад` `</button` `>` ;
+mainContent.innerHTML =  `📺 Стримерам Подключите бота к своему каналу, чтобы получать уведомления о начале стрима. <label for="channel-id">ID вашего Telegram-канала:</label><input type="text" id="channel-id" placeholder="Например: 123456789" required><label for="twitch-url">Ссылка на Twitch/YouTube:</label><input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required><button type="submit" class="submenu-btn" onclick="registerStreamer()">Подключить</button><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
 }
 
 // --- Регистрация стримера ---
@@ -338,7 +359,7 @@ function showClanNEPage() {
   // 📌 Здесь вы можете легко изменить текст
   const clanText = "Добро пожаловать";
   // 📌 Замените ссылку на ваш Discord-приглашение
-  const discordInviteLink = "discord.gg/nevskiy"; // ← ИЗМЕНИТЕ ЭТУ ССЫЛКУ
+  const discordInviteLink = "https://discord.gg/YOUR_INVITE_CODE"; // <- ИЗМЕНИТЕ ЭТУ ССЫЛКУ
 
   mainContent.innerHTML = `
     <h2>⚔️ Клан NE</h2>
