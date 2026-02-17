@@ -162,8 +162,8 @@ function showArcRaidersMenu() {
     <h2>🎮 Arc Raiders</h2>
     <button class="submenu-btn" onclick="showEvents()">События</button>
     <button class="submenu-btn" onclick="showNews()">Обновления</button>
-    <button class="submenu-btn" onclick="alert('Раздел \\'Гайды\\' в разработке.')">Гайды</button>
-    <button class="submenu-btn" onclick="alert('Раздел \\'Испытание\\' в разработке.')">Испытание</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">Испытание</button>
     <button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>
   `;
 }
@@ -373,4 +373,5 @@ async function registerStreamer() {
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
 
