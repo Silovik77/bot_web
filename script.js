@@ -315,6 +315,13 @@ window.showStreamersForm = function() {
   mainContent.innerHTML = `
     <h2>📺 Стримерам</h2>
     <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
+    
+    <div style="background: #fff3cd; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #ffc107;">
+      <p style="margin: 0; text-align: left; color: #856404; font-size: 14px;">
+        <strong>⚠️ Важно:</strong> Не забудьте добавить бота в свой Telegram-канал с правами администратора!
+      </p>
+    </div>
+    
     <div style="margin: 20px 0;">
       <label for="channel-id">ID вашего Telegram-канала:</label><br>
       <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
@@ -324,6 +331,7 @@ window.showStreamersForm = function() {
       <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
     </div>
     <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
+    <button class="submenu-btn" style="background:#e67e22; margin-top:10px;" onclick="window.sendManualNotification()">🔔 Отправить уведомление вручную</button>
     <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
   `;
 };
@@ -345,7 +353,7 @@ window.registerStreamer = async function() {
     if (response.ok) {
       const result = await response.json();
       alert(result.message || '✅ Вы успешно подключили бота!');
-      window.showMainMenu();
+      window.showStreamersForm();
     } else {
       const error = await response.json();
       alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
@@ -353,6 +361,31 @@ window.registerStreamer = async function() {
   } catch (error) {
     console.error('Ошибка при подключении:', error);
     alert('❌ Не удалось подключиться к серверу. Проверьте консоль.');
+  }
+};
+
+// ✅ НОВАЯ ФУНКЦИЯ: Ручная отправка уведомления
+window.sendManualNotification = async function() {
+  if (!confirm('⚠️ Вы уверены, что хотите отправить ручное уведомление о стриме?\n\nЭто отправит сообщение всем подключенным каналам.')) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${API_URL}/api/send_manual_notification`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      alert(`✅ ${result.message}\n\nУспешно: ${result.sent}\nОшибок: ${result.failed}`);
+    } else {
+      const error = await response.json();
+      alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
+    }
+  } catch (error) {
+    console.error('Ошибка при ручной отправке:', error);
+    alert('❌ Не удалось отправить уведомление. Проверьте консоль.');
   }
 };
 
@@ -367,28 +400,15 @@ window.showClanNEPage = async function() {
     }
     const data = await response.json();
     let html = `<h2>⚔️ Клан NE</h2>`;
-    // 1. Текст о клане
     html += `<p>${data.clan_info_text}</p>`;
-    // 2. Кнопка "Подать заявку"
-    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">
-      ➕ Подать заявку в клан
-    </button>`;
-    // 3. Кнопка "Подписаться на уведомления"
-    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">
-      📢 Подписаться на уведомления
-    </button>`;
-    // 4. Кнопка "Отписаться от уведомлений"
-    html += `<button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">
-      🔕 Отписаться от уведомлений
-    </button>`;
-    // 5. Розыгрыши (если есть)
+    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">➕ Подать заявку в клан</button>`;
+    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">📢 Подписаться на уведомления</button>`;
     if (data.has_givs) {
       html += `<h3>🎁 Розыгрыши:</h3>`;
       data.givs.forEach(giv => {
         html += `<div class="news-item"><p>${giv.description}</p></div>`;
       });
     }
-    // 6. Мероприятия (если есть)
     if (data.has_events) {
       html += `<h3>📋 Мероприятия:</h3>`;
       data.events.forEach(event => {
