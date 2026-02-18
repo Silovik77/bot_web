@@ -369,24 +369,61 @@ async function registerStreamer() {
 }
 
 // --- Отображение раздела Клан NE ---
-function showClanNEPage() {
+async function showClanNEPage() {
   const mainContent = document.getElementById('main-content');
-  const clanText = "Добро пожаловать";
-  const discordInviteLink = "https://discord.gg/nevskiy";
-
-  mainContent.innerHTML = `
-    <h2>⚔️ Клан NE</h2>
-    <p>${clanText}</p>
-    <button class="submenu-btn" style="background:#2ecc71; margin-top:20px;" onclick="window.open('${discordInviteLink}', '_blank')">
+  mainContent.innerHTML = `<h2>⚔️ Клан NE</h2><p>Загрузка информации...</p>`;
+  
+  try {
+    const response = await fetch(`${API_URL}/api/clan_info`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    
+    let html = `<h2>⚔️ Клан NE</h2>`;
+    
+    // 1. Текст о клане
+    html += `<p>${data.clan_info_text}</p>`;
+    
+    // 2. Кнопка "Подать заявку"
+    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">
       ➕ Подать заявку в клан
-    </button>
-    <button class="submenu-btn back-btn" onclick="showMainMenu()">
-      Назад
-    </button>
-  `;
+    </button>`;
+    
+    // 3. Кнопка "Подписаться на уведомления"
+    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">
+      📢 Подписаться на уведомления
+    </button>`;
+    
+    // 4. Розыгрыши (если есть)
+    if (data.has_givs) {
+      html += `<h3>🎁 Розыгрыши:</h3>`;
+      data.givs.forEach(giv => {
+        html += `<div class="news-item"><p>${giv.description}</p></div>`;
+      });
+    }
+    
+    // 5. Мероприятия (если есть)
+    if (data.has_events) {
+      html += `<h3>📋 Мероприятия:</h3>`;
+      data.events.forEach(event => {
+        html += `<div class="news-item"><p>${event.description}</p></div>`;
+      });
+    } else {
+      html += `<p>На данный момент нет запланированных мероприятий.</p>`;
+    }
+    
+    html += `<button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+    mainContent.innerHTML = html;
+    
+  } catch (error) {
+    console.error('Ошибка загрузки информации о клане:', error);
+    mainContent.innerHTML = `<p style="color: red;">❌ Ошибка: ${error.message}</p><button class="submenu-btn back-btn" onclick="showMainMenu()">Назад</button>`;
+  }
 }
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
   showMainMenu();
 });
+
