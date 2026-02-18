@@ -331,7 +331,7 @@ window.showStreamersForm = function() {
         <p style="margin: 0 0 12px 0; text-align: left;"><strong>✅ Бот уже подключен!</strong></p>
         <p style="margin: 0 0 12px 0; text-align: left; font-size: 14px;">Вы будете получать уведомления о начале стрима.</p>
         <button class="submenu-btn" style="background: #dc3545;" onclick="window.unregisterStreamer()">
-          🔕 Отключить уведомления
+          🔕 Отключить канал
         </button>
       </div>
     `;
@@ -385,7 +385,7 @@ window.registerStreamer = async function() {
   }
 };
 
-// ✅ НОВАЯ ФУНКЦИЯ: Отключение стримера
+// --- Отключение стримера ---
 window.unregisterStreamer = async function() {
   const channelId = localStorage.getItem('streamer_channel_id');
   if (!channelId) {
