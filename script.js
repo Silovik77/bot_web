@@ -401,10 +401,12 @@ window.unregisterStreamer = async function() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ channel_id: channelId })
     });
-    if (response.ok) {
-      const result = await response.json();
-      localStorage.removeItem('streamer_channel_id');
-      alert(result.message || '✅ Вы успешно отключили бота!');
+    
+    // Очищаем localStorage в любом случае
+    localStorage.removeItem('streamer_channel_id');
+    
+    if (response.ok || response.status === 404) {
+      alert('✅ Вы успешно отключили бота!');
       window.showStreamersForm();
     } else {
       const error = await response.json();
@@ -412,6 +414,7 @@ window.unregisterStreamer = async function() {
     }
   } catch (error) {
     console.error('Ошибка при отключении:', error);
+    localStorage.removeItem('streamer_channel_id');
     alert('❌ Не удалось отключиться. Проверьте консоль.');
   }
 };
