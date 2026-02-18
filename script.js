@@ -331,6 +331,7 @@ window.showStreamersForm = function() {
       <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
     </div>
     <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
+    <button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="window.unregisterStreamer()">🔕 Отключить уведомления</button>
     <button class="submenu-btn" style="background:#e67e22; margin-top:10px;" onclick="window.sendManualNotification()">🔔 Отправить уведомление вручную</button>
     <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
   `;
@@ -352,6 +353,7 @@ window.registerStreamer = async function() {
     });
     if (response.ok) {
       const result = await response.json();
+      localStorage.setItem('streamer_channel_id', channelId);
       alert(result.message || '✅ Вы успешно подключили бота!');
       window.showStreamersForm();
     } else {
@@ -364,18 +366,47 @@ window.registerStreamer = async function() {
   }
 };
 
-// ✅ НОВАЯ ФУНКЦИЯ: Ручная отправка уведомления
+// --- Отключение стримера ---
+window.unregisterStreamer = async function() {
+  const channelId = localStorage.getItem('streamer_channel_id');
+  if (!channelId) {
+    alert('❌ Сначала подключите бота, чтобы отключить его.');
+    return;
+  }
+  if (!confirm('⚠️ Вы уверены, что хотите отключить уведомления о стримах?')) {
+    return;
+  }
+  try {
+    const response = await fetch(`${API_URL}/api/unregister_streamer`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel_id: channelId })
+    });
+    if (response.ok) {
+      const result = await response.json();
+      localStorage.removeItem('streamer_channel_id');
+      alert(result.message || '✅ Вы успешно отключили бота!');
+      window.showStreamersForm();
+    } else {
+      const error = await response.json();
+      alert(`❌ Ошибка: ${error.error || 'Неизвестная ошибка'}`);
+    }
+  } catch (error) {
+    console.error('Ошибка при отключении:', error);
+    alert('❌ Не удалось отключиться. Проверьте консоль.');
+  }
+};
+
+// --- Ручная отправка уведомления ---
 window.sendManualNotification = async function() {
   if (!confirm('⚠️ Вы уверены, что хотите отправить ручное уведомление о стриме?\n\nЭто отправит сообщение всем подключенным каналам.')) {
     return;
   }
-  
   try {
     const response = await fetch(`${API_URL}/api/send_manual_notification`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
-    
     if (response.ok) {
       const result = await response.json();
       alert(`✅ ${result.message}\n\nУспешно: ${result.sent}\nОшибок: ${result.failed}`);
