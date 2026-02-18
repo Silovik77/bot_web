@@ -431,15 +431,28 @@ window.showClanNEPage = async function() {
     }
     const data = await response.json();
     let html = `<h2>⚔️ Клан NE</h2>`;
+    
+    // 1. Текст о клане
     html += `<p>${data.clan_info_text}</p>`;
+    
+    // 2. Кнопка "Подать заявку"
     html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">➕ Подать заявку в клан</button>`;
+    
+    // 3. Кнопка "Подписаться на уведомления"
     html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">📢 Подписаться на уведомления</button>`;
+    
+    // 4. ✅ Кнопка "Отписаться от уведомлений" (НОВАЯ!)
+    html += `<button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">🔕 Отписаться от уведомлений</button>`;
+    
+    // 5. Розыгрыши (если есть)
     if (data.has_givs) {
       html += `<h3>🎁 Розыгрыши:</h3>`;
       data.givs.forEach(giv => {
         html += `<div class="news-item"><p>${giv.description}</p></div>`;
       });
     }
+    
+    // 6. Мероприятия (если есть)
     if (data.has_events) {
       html += `<h3>📋 Мероприятия:</h3>`;
       data.events.forEach(event => {
@@ -448,6 +461,7 @@ window.showClanNEPage = async function() {
     } else {
       html += `<p>На данный момент нет запланированных мероприятий.</p>`;
     }
+    
     html += `<button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>`;
     mainContent.innerHTML = html;
   } catch (error) {
