@@ -377,14 +377,18 @@ window.showClanNEPage = async function() {
     html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">
       📢 Подписаться на уведомления
     </button>`;
-    // 4. Розыгрыши (если есть)
+    // 4. Кнопка "Отписаться от уведомлений"
+    html += `<button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">
+      🔕 Отписаться от уведомлений
+    </button>`;
+    // 5. Розыгрыши (если есть)
     if (data.has_givs) {
       html += `<h3>🎁 Розыгрыши:</h3>`;
       data.givs.forEach(giv => {
         html += `<div class="news-item"><p>${giv.description}</p></div>`;
       });
     }
-    // 5. Мероприятия (если есть)
+    // 6. Мероприятия (если есть)
     if (data.has_events) {
       html += `<h3>📋 Мероприятия:</h3>`;
       data.events.forEach(event => {
