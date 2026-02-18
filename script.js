@@ -312,7 +312,9 @@ window.showEvents = async function() {
 // --- Отображение формы для стримеров ---
 window.showStreamersForm = function() {
   const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
+  const isRegistered = localStorage.getItem('streamer_channel_id');
+  
+  let html = `
     <h2>📺 Стримерам</h2>
     <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
     
@@ -321,20 +323,37 @@ window.showStreamersForm = function() {
         <strong>⚠️ Важно:</strong> Не забудьте добавить бота в свой Telegram-канал с правами администратора!
       </p>
     </div>
-    
-    <div style="margin: 20px 0;">
-      <label for="channel-id">ID вашего Telegram-канала:</label><br>
-      <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
-    </div>
-    <div style="margin: 20px 0;">
-      <label for="twitch-url">Ссылка на Twitch/YouTube:</label><br>
-      <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
-    </div>
-    <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
-    <button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="window.unregisterStreamer()">🔕 Отключить уведомления</button>
+  `;
+  
+  if (isRegistered) {
+    html += `
+      <div style="background: #d4edda; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #28a745;">
+        <p style="margin: 0 0 12px 0; text-align: left;"><strong>✅ Бот уже подключен!</strong></p>
+        <p style="margin: 0 0 12px 0; text-align: left; font-size: 14px;">Вы будете получать уведомления о начале стрима.</p>
+        <button class="submenu-btn" style="background: #dc3545;" onclick="window.unregisterStreamer()">
+          🔕 Отключить уведомления
+        </button>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="margin: 20px 0;">
+        <label for="channel-id">ID вашего Telegram-канала:</label><br>
+        <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
+      </div>
+      <div style="margin: 20px 0;">
+        <label for="twitch-url">Ссылка на Twitch/YouTube:</label><br>
+        <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
+      </div>
+      <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
+    `;
+  }
+  
+  html += `
     <button class="submenu-btn" style="background:#e67e22; margin-top:10px;" onclick="window.sendManualNotification()">🔔 Отправить уведомление вручную</button>
     <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
   `;
+  mainContent.innerHTML = html;
 };
 
 // --- Регистрация стримера ---
@@ -366,7 +385,7 @@ window.registerStreamer = async function() {
   }
 };
 
-// --- Отключение стримера ---
+// ✅ НОВАЯ ФУНКЦИЯ: Отключение стримера
 window.unregisterStreamer = async function() {
   const channelId = localStorage.getItem('streamer_channel_id');
   if (!channelId) {
@@ -431,28 +450,16 @@ window.showClanNEPage = async function() {
     }
     const data = await response.json();
     let html = `<h2>⚔️ Клан NE</h2>`;
-    
-    // 1. Текст о клане
     html += `<p>${data.clan_info_text}</p>`;
-    
-    // 2. Кнопка "Подать заявку"
     html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">➕ Подать заявку в клан</button>`;
-    
-    // 3. Кнопка "Подписаться на уведомления"
     html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">📢 Подписаться на уведомления</button>`;
-    
-    // 4. ✅ Кнопка "Отписаться от уведомлений" (НОВАЯ!)
     html += `<button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">🔕 Отписаться от уведомлений</button>`;
-    
-    // 5. Розыгрыши (если есть)
     if (data.has_givs) {
       html += `<h3>🎁 Розыгрыши:</h3>`;
       data.givs.forEach(giv => {
         html += `<div class="news-item"><p>${giv.description}</p></div>`;
       });
     }
-    
-    // 6. Мероприятия (если есть)
     if (data.has_events) {
       html += `<h3>📋 Мероприятия:</h3>`;
       data.events.forEach(event => {
@@ -461,7 +468,6 @@ window.showClanNEPage = async function() {
     } else {
       html += `<p>На данный момент нет запланированных мероприятий.</p>`;
     }
-    
     html += `<button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>`;
     mainContent.innerHTML = html;
   } catch (error) {
