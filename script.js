@@ -141,13 +141,13 @@ function applyFilters() {
 window.showMainMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <p style="text-align: center; font-size: 18px; margin-bottom: 30px;">Добро пожаловать! Выберите раздел в меню ниже.</p>
     <div class="main-menu">
-      <button class="menu-btn" onclick="window.showArcRaidersMenu()">Arc Raiders</button>
-      <button class="menu-btn" onclick="window.showStreamersForm()">Стримерам</button>
-      <button class="menu-btn" onclick="window.showClanNEPage()">Клан NE</button>
-      <button class="menu-btn" onclick="alert('Информация — в разработке')">Информация</button>
-      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">Обратная связь</button>
+      <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
+      <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
+      <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
+      <button class="menu-btn" onclick="alert('Информация — в разработке')">ℹ️ Информация</button>
+      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">💬 Обратная связь</button>
     </div>
   `;
 };
@@ -157,11 +157,11 @@ window.showArcRaidersMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
     <h2>🎮 Arc Raiders</h2>
-    <button class="submenu-btn" onclick="window.showEvents()">События</button>
-    <button class="submenu-btn" onclick="window.showNews()">Обновления</button>
-    <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">Гайды</button>
-    <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">Испытание</button>
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
+    <button class="submenu-btn" onclick="window.showEvents()">📅 События</button>
+    <button class="submenu-btn" onclick="window.showNews()">📰 Обновления</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">📚 Гайды</button>
+    <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">🏆 Испытание</button>
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
   `;
 };
 
@@ -174,7 +174,7 @@ window.showNews = async function() {
       mainContent.innerHTML = `
         <h2>📰 Новости игры</h2>
         <p>Нет доступных новостей.</p>
-        <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+        <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
       `;
       return;
     }
@@ -193,14 +193,14 @@ window.showNews = async function() {
         </div>
       `;
     });
-    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>';
     mainContent.innerHTML = html;
   } catch (error) {
     console.error('Ошибка при отображении новостей:', error);
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
     `;
   }
 };
@@ -293,7 +293,7 @@ window.showEvents = async function() {
     } else {
       html += '<p class="no-data">🔴 Нет предстоящих событий</p>';
     }
-    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>';
+    html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>';
     mainContent.innerHTML = html;
     setTimeout(() => {
       document.getElementById('filter-map')?.addEventListener('change', applyFilters);
@@ -304,7 +304,7 @@ window.showEvents = async function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
     `;
   }
 };
@@ -318,8 +318,8 @@ window.showStreamersForm = function() {
     <h2>📺 Стримерам</h2>
     <p>Подключите бота к своему каналу, чтобы получать уведомления о начале стрима.</p>
     
-    <div style="background: #fff3cd; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #ffc107;">
-      <p style="margin: 0; text-align: left; color: #856404; font-size: 14px;">
+    <div style="background: rgba(255, 243, 205, 0.1); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #ffc107; backdrop-filter: blur(5px);">
+      <p style="margin: 0; text-align: left; color: #ffd54f; font-size: 14px;">
         <strong>⚠️ Важно:</strong> Не забудьте добавить бота в свой Telegram-канал с правами администратора!
       </p>
     </div>
@@ -327,10 +327,10 @@ window.showStreamersForm = function() {
   
   if (isRegistered) {
     html += `
-      <div style="background: #d4edda; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #28a745;">
+      <div style="background: rgba(212, 237, 218, 0.1); padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #28a745; backdrop-filter: blur(5px);">
         <p style="margin: 0 0 12px 0; text-align: left;"><strong>✅ Бот уже подключен!</strong></p>
         <p style="margin: 0 0 12px 0; text-align: left; font-size: 14px;">Вы будете получать уведомления о начале стрима.</p>
-        <button class="submenu-btn" style="background: #dc3545;" onclick="window.unregisterStreamer()">
+        <button class="submenu-btn" style="background: rgba(220, 53, 69, 0.8);" onclick="window.unregisterStreamer()">
           🔕 Отключить канал
         </button>
       </div>
@@ -339,19 +339,19 @@ window.showStreamersForm = function() {
     html += `
       <div style="margin: 20px 0;">
         <label for="channel-id">ID вашего Telegram-канала:</label><br>
-        <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0;">
+        <input type="text" id="channel-id" placeholder="Например: 123456789" required style="width:100%; padding:8px; margin:8px 0; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff;">
       </div>
       <div style="margin: 20px 0;">
         <label for="twitch-url">Ссылка на Twitch/YouTube:</label><br>
-        <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0;">
+        <input type="url" id="twitch-url" placeholder="https://twitch.tv/your_name" required style="width:100%; padding:8px; margin:8px 0; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff;">
       </div>
       <button class="submenu-btn" onclick="window.registerStreamer()">Подключить</button>
     `;
   }
   
   html += `
-    <button class="submenu-btn" style="background:#e67e22; margin-top:10px;" onclick="window.sendManualNotification()">🔔 Отправить уведомление вручную</button>
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
+    <button class="submenu-btn" style="background: rgba(230, 126, 34, 0.8); margin-top:10px;" onclick="window.sendManualNotification()">🔔 Отправить уведомление вручную</button>
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
   `;
   mainContent.innerHTML = html;
 };
@@ -401,11 +401,8 @@ window.unregisterStreamer = async function() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ channel_id: channelId })
     });
-    
-    // Очищаем localStorage в любом случае
-    localStorage.removeItem('streamer_channel_id');
-    
     if (response.ok || response.status === 404) {
+      localStorage.removeItem('streamer_channel_id');
       alert('✅ Вы успешно отключили бота!');
       window.showStreamersForm();
     } else {
@@ -454,9 +451,9 @@ window.showClanNEPage = async function() {
     const data = await response.json();
     let html = `<h2>⚔️ Клан NE</h2>`;
     html += `<p>${data.clan_info_text}</p>`;
-    html += `<button class="submenu-btn" style="background:#2ecc71; margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">➕ Подать заявку в клан</button>`;
-    html += `<button class="submenu-btn" style="background:#3498db; margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">📢 Подписаться на уведомления</button>`;
-    html += `<button class="submenu-btn" style="background:#e74c3c; margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">🔕 Отписаться от уведомлений</button>`;
+    html += `<button class="submenu-btn" style="background: rgba(46, 204, 113, 0.8); margin-top:10px;" onclick="window.open('https://discord.gg/nevskiy', '_blank')">➕ Подать заявку в клан</button>`;
+    html += `<button class="submenu-btn" style="background: rgba(52, 152, 219, 0.8); margin-top:10px;" onclick="alert('Используйте команду /ne_subscribe в боте')">📢 Подписаться на уведомления</button>`;
+    html += `<button class="submenu-btn" style="background: rgba(231, 76, 60, 0.8); margin-top:10px;" onclick="alert('Используйте команду /ne_unsubscribe в боте')">🔕 Отписаться от уведомлений</button>`;
     if (data.has_givs) {
       html += `<h3>🎁 Розыгрыши:</h3>`;
       data.givs.forEach(giv => {
@@ -471,13 +468,13 @@ window.showClanNEPage = async function() {
     } else {
       html += `<p>На данный момент нет запланированных мероприятий.</p>`;
     }
-    html += `<button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>`;
+    html += `<button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>`;
     mainContent.innerHTML = html;
   } catch (error) {
     console.error('Ошибка загрузки информации о клане:', error);
     mainContent.innerHTML = `
       <p style="color: red;">❌ Ошибка: ${error.message}</p>
-      <button class="submenu-btn back-btn" onclick="window.showMainMenu()">Назад</button>
+      <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
     `;
   }
 };
