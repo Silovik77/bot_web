@@ -549,7 +549,7 @@ window.showFeedbackPage = function() {
       
       <div style="margin-bottom: 12px;">
         <label style="display: block; margin-bottom: 5px; font-weight: 600;">Ваше сообщение:</label>
-        <textarea id="feedback-message" rows="4" placeholder="Опишите проблему или идею подробно... (мин. 250 символов)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff; resize: vertical;"></textarea>
+        <textarea id="feedback-message" rows="4" placeholder="Опишите проблему или идею подробно... (мин. 10 символов)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff; resize: vertical;"></textarea>
         <p id="char-count" style="font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 5px; text-align: right;">0 / 2000</p>
       </div>
       
@@ -599,7 +599,7 @@ window.showFeedbackPage = function() {
     textarea.addEventListener('input', () => {
       const len = textarea.value.length;
       charCount.textContent = `${len} / 2000`;
-      charCount.style.color = len < 250 ? '#ff6b6b' : len > 2000 ? '#ff6b6b' : '#00ff88';
+      charCount.style.color = len < 10 ? '#ff6b6b' : len > 2000 ? '#ff6b6b' : '#00ff88';
     });
   }
   
@@ -676,8 +676,8 @@ window.sendFeedback = async function() {
     statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Напишите сообщение</span>';
     return;
   }
-  if (message.length < 250) {
-    statusEl.innerHTML = `<span style="color: #ff6b6b;">❌ Слишком коротко (нужно минимум 250 символов, сейчас: ${message.length})</span>`;
+  if (message.length < 10) {
+    statusEl.innerHTML = `<span style="color: #ff6b6b;">❌ Слишком коротко (нужно минимум 10 символов, сейчас: ${message.length})</span>`;
     return;
   }
   if (message.length > 2000) {
@@ -731,6 +731,7 @@ window.sendFeedback = async function() {
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
+
 
 
 
