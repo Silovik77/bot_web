@@ -147,8 +147,8 @@ window.showMainMenu = function() {
       <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
       <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
       <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
-      <button class="menu-btn" onclick="alert('Информация — в разработке')">ℹ️ Информация</button>
-      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">💬 Обратная связь</button>
+      <button class="menu-btn" onclick="window.showInfoPage()">ℹ️ Информация</button>
+      <button class="menu-btn" onclick="window.showFeedbackPage()">💬 Обратная связь</button>
     </div>
   `;
 };
@@ -592,5 +592,6 @@ window.showFeedbackPage = function() {
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
+
 
 
