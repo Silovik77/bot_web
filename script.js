@@ -531,66 +531,207 @@ window.showFeedbackPage = function() {
   mainContent.innerHTML = `
     <h2>💬 Обратная связь</h2>
     
+    <!-- Форма для баг-репорта / предложения -->
     <div class="info-section">
-      <h3>📩 Связаться с нами</h3>
-      <p>
-        У вас есть предложения, вопросы или вы нашли ошибку? 
-        Мы будем рады услышать ваше мнение!
+      <h3>📩 Отправить сообщение</h3>
+      <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 15px;">
+        💡 Ваше сообщение придёт администратору бота. Отправка анонимна.<br>
+        ⏱️ <strong>Ограничение:</strong> 1 сообщение в 30 минут.
       </p>
       
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Тип сообщения:</label>
+        <select id="feedback-type" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff;">
+          <option value="bug">🐛 Баг-репорт (ошибка)</option>
+          <option value="suggestion">💡 Предложение / идея</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Ваше сообщение:</label>
+        <textarea id="feedback-message" rows="4" placeholder="Опишите проблему или идею подробно... (мин. 250 символов)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff; resize: vertical;"></textarea>
+        <p id="char-count" style="font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 5px; text-align: right;">0 / 2000</p>
+      </div>
+      
+      <button class="submenu-btn" style="background: rgba(0, 212, 255, 0.8);" onclick="window.sendFeedback()">📤 Отправить</button>
+      <p id="feedback-status" style="margin-top: 10px; font-size: 14px;"></p>
+    </div>
+    
+    <!-- Контакты -->
+    <div class="info-section">
+      <h3>🔗 Другие способы связи</h3>
       <div class="contact-methods">
         <div class="contact-item">
           <strong>💬 Discord:</strong><br>
           <a href="https://discord.gg/nevskiy" target="_blank">Присоединиться к серверу</a>
         </div>
-        
         <div class="contact-item">
           <strong>✈️ Telegram:</strong><br>
           <a href="https://t.me/nevskiy_clan" target="_blank">Написать администратору</a>
         </div>
-        
-        <div class="contact-item">
-          <strong>🎮 В игре:</strong><br>
-          Найдите участника клана NE и напишите ему
-        </div>
       </div>
     </div>
     
+    <!-- FAQ -->
     <div class="info-section">
       <h3>❓ Частые вопросы</h3>
-      
       <details>
         <summary>Как вступить в клан?</summary>
-        <p>
-          Нажмите кнопку "Подать заявку в клан" в разделе "Клан NE" 
-          или напишите нам в Discord.
-        </p>
+        <p>Нажмите кнопку "Подать заявку в клан" в разделе "Клан NE" или напишите нам в Discord.</p>
       </details>
-      
       <details>
         <summary>Как подключить уведомления о стриме?</summary>
-        <p>
-          Перейдите в раздел "Стримерам" и заполните форму подключения.
-        </p>
+        <p>Перейдите в раздел "Стримерам" и заполните форму подключения.</p>
       </details>
-      
       <details>
         <summary>Как подписаться на уведомления о мероприятиях?</summary>
-        <p>
-          Используйте команду <code>/ne_subscribe</code> в боте 
-          или нажмите кнопку в разделе "Клан NE".
-        </p>
+        <p>Используйте команду <code>/ne_subscribe</code> в боте или нажмите кнопку в разделе "Клан NE".</p>
       </details>
     </div>
     
     <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
   `;
+  
+  // Добавляем счётчик символов
+  const textarea = document.getElementById('feedback-message');
+  const charCount = document.getElementById('char-count');
+  if (textarea && charCount) {
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = `${len} / 2000`;
+      charCount.style.color = len < 250 ? '#ff6b6b' : len > 2000 ? '#ff6b6b' : '#00ff88';
+    });
+  }
+  
+  // Проверяем, не заблокирована ли отправка
+  window.checkFeedbackCooldown();
+};
+
+// ✅ ПРОВЕРКА: Ограничение по времени (30 минут)
+window.checkFeedbackCooldown = function() {
+  const lastSubmission = localStorage.getItem('feedback_last_submission');
+  const btn = document.querySelector('button[onclick="window.sendFeedback()"]');
+  const statusEl = document.getElementById('feedback-status');
+  
+  if (lastSubmission && btn) {
+    const now = Date.now();
+    const timeDiff = now - parseInt(lastSubmission);
+    const cooldown = 1800000; // 30 минут в миллисекундах
+    
+    if (timeDiff < cooldown) {
+      const remaining = cooldown - timeDiff;
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      
+      btn.disabled = true;
+      btn.innerHTML = `⏳ Подождите ${minutes} мин ${seconds} сек`;
+      btn.style.background = 'rgba(100, 100, 100, 0.8)';
+      
+      if (statusEl) {
+        statusEl.innerHTML = '<span style="color: #ff6b6b;">⏱️ Лимит: 1 сообщение в 30 минут</span>';
+      }
+      
+      // Обновляем таймер каждую секунду
+      const timer = setInterval(() => {
+        const newRemaining = cooldown - (Date.now() - parseInt(lastSubmission));
+        if (newRemaining <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.innerHTML = '📤 Отправить';
+          btn.style.background = 'rgba(0, 212, 255, 0.8)';
+          if (statusEl) statusEl.innerHTML = '';
+        } else {
+          const newMinutes = Math.floor(newRemaining / 60000);
+          const newSeconds = Math.floor((newRemaining % 60000) / 1000);
+          btn.innerHTML = `⏳ Подождите ${newMinutes} мин ${newSeconds} сек`;
+        }
+      }, 1000);
+      
+      return false;
+    }
+  }
+  
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '📤 Отправить';
+    btn.style.background = 'rgba(0, 212, 255, 0.8)';
+  }
+  if (statusEl) statusEl.innerHTML = '';
+  return true;
+};
+
+// ✅ НОВАЯ ФУНКЦИЯ: Отправка обратной связи
+window.sendFeedback = async function() {
+  // Проверяем cooldown
+  if (!window.checkFeedbackCooldown()) {
+    return;
+  }
+  
+  const type = document.getElementById('feedback-type')?.value;
+  const message = document.getElementById('feedback-message')?.value.trim();
+  const statusEl = document.getElementById('feedback-status');
+  
+  // Валидация
+  if (!message) {
+    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Напишите сообщение</span>';
+    return;
+  }
+  if (message.length < 250) {
+    statusEl.innerHTML = `<span style="color: #ff6b6b;">❌ Слишком коротко (нужно минимум 250 символов, сейчас: ${message.length})</span>`;
+    return;
+  }
+  if (message.length > 2000) {
+    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Слишком длинно (максимум 2000 символов)</span>';
+    return;
+  }
+  
+  // Блокируем кнопку во время отправки
+  const btn = event?.target;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Отправка...';
+  }
+  
+  try {
+    const response = await fetch(`${API_URL}/api/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, message })
+    });
+    
+    const result = await response.json();
+    
+    if (response.ok) {
+      // Сохраняем время отправки в localStorage
+      localStorage.setItem('feedback_last_submission', Date.now().toString());
+      
+      statusEl.innerHTML = '<span style="color: #00ff88;">✅ ' + result.message + '</span>';
+      document.getElementById('feedback-message').value = ''; // Очистить поле
+      if (document.getElementById('char-count')) {
+        document.getElementById('char-count').textContent = '0 / 2000';
+      }
+      
+      // Блокируем кнопку на 30 минут
+      window.checkFeedbackCooldown();
+    } else {
+      statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ ' + (result.error || 'Ошибка отправки') + '</span>';
+    }
+  } catch (error) {
+    console.error('Ошибка отправки feedback:', error);
+    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Не удалось отправить. Проверьте соединение.</span>';
+  } finally {
+    // Разблокируем кнопку (но cooldown всё равно активен)
+    if (btn) {
+      btn.disabled = false;
+    }
+  }
 };
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
+
 
 
 
