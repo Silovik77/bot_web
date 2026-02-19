@@ -39,47 +39,33 @@ body {
   50% { opacity: 0.8; transform: translateY(-10px); }
 }
 
-/* Шапка клана */
-.clan-header {
-  text-align: center;
-  padding: 30px 20px;
-  background: rgba(0, 0, 0, 0.4);
-  border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+/* Баннер WELCOME */
+.welcome-banner {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 30px;
+  padding: 0 20px;
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(10px);
 }
 
-.logo-container {
-  margin-bottom: 15px;
-}
-
-.clan-logo {
-  width: 120px;
+.banner-image {
+  width: 100%;
   height: auto;
-  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6));
-  animation: logoGlow 3s ease-in-out infinite;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+  animation: bannerGlow 3s ease-in-out infinite;
 }
 
-@keyframes logoGlow {
-  0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6)); }
-  50% { filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.9)); }
-}
-
-.clan-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
-  margin-bottom: 8px;
-  letter-spacing: 2px;
-}
-
-.clan-subtitle {
-  font-size: 16px;
-  color: #00d4ff;
-  letter-spacing: 1px;
-  opacity: 0.9;
+@keyframes bannerGlow {
+  0%, 100% { 
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+    transform: translateY(0);
+  }
+  50% { 
+    box-shadow: 0 15px 50px rgba(0, 212, 255, 0.6);
+    transform: translateY(-5px);
+  }
 }
 
 /* Основной контент */
@@ -88,7 +74,10 @@ body {
   z-index: 1;
   max-width: 600px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 0 20px 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 300px);
 }
 
 /* Заголовки */
@@ -110,6 +99,11 @@ h3 {
 }
 
 /* Кнопки главного меню */
+.main-menu {
+  margin-top: auto;
+  padding-top: 30px;
+}
+
 .menu-btn {
   display: block;
   width: 100%;
@@ -305,6 +299,116 @@ h3 {
   transform: translateX(5px);
 }
 
+/* Информация */
+.info-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  backdrop-filter: blur(10px);
+}
+
+.info-section h3 {
+  color: #00d4ff;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.info-section p {
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.info-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.info-section ul li {
+  padding: 5px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+.info-section ul li:before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: #00d4ff;
+}
+
+.info-section a {
+  color: #00d4ff;
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px 0;
+  transition: all 0.3s;
+}
+
+.info-section a:hover {
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Контакты */
+.contact-methods {
+  margin-top: 15px;
+}
+
+.contact-item {
+  background: rgba(0, 212, 255, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  border-left: 3px solid #00d4ff;
+}
+
+.contact-item strong {
+  color: #00d4ff;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* FAQ */
+details {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+details:hover {
+  background: rgba(0, 212, 255, 0.1);
+}
+
+summary {
+  font-weight: 600;
+  color: #00d4ff;
+  outline: none;
+}
+
+details[open] summary {
+  margin-bottom: 10px;
+}
+
+details p {
+  margin: 0;
+  padding-left: 15px;
+  border-left: 2px solid #00d4ff;
+}
+
+code {
+  background: rgba(0, 212, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #00d4ff;
+}
+
 /* Подвал */
 .footer {
   text-align: center;
@@ -319,8 +423,21 @@ h3 {
 
 /* Адаптация */
 @media (max-width: 480px) {
-  .clan-title {
-    font-size: 28px;
+  .welcome-banner {
+    padding: 0 15px;
+    margin-bottom: 20px;
+  }
+  
+  .banner-image {
+    border-radius: 10px;
+  }
+  
+  .main-content {
+    padding: 0 15px 20px;
+  }
+  
+  h2 {
+    font-size: 24px;
   }
   
   .menu-btn {
@@ -340,5 +457,17 @@ h3 {
   
   .event-time {
     margin-top: 10px;
+  }
+  
+  .info-section {
+    padding: 15px;
+  }
+  
+  .info-section h3 {
+    font-size: 16px;
+  }
+  
+  .contact-item {
+    padding: 12px;
   }
 }
