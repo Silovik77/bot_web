@@ -336,7 +336,6 @@ window.showTrialsPage = async function() {
         html += '<p style="margin-bottom: 20px; color: rgba(255,255,255,0.7);">Актуальные испытания на эту неделю</p>';
         
         trials.forEach((trial, index) => {
-            // Путь к изображению (для GitHub Pages)
             const imagePath = trial.image_path.replace('/data/', '../data/');
             
             html += `
@@ -575,19 +574,18 @@ window.showInfoPage = function() {
         </div>
         
         <div class="info-section">
-            <h3>👥 Клан NE</h3>
+            <h3>👨‍💻 Создатель бота</h3>
             <p>
-                <strong>NE (NEVSKIY)</strong> — элитный клан ARC Raiders.
-                Мы организуем регулярные рейды, участвуем в ивентах и помогаем 
-                новичкам освоиться в игре.
+                <strong>🛡️ SILOVIK</strong> — разработчик и администратор бота.
             </p>
         </div>
         
         <div class="info-section">
             <h3>🔗 Полезные ссылки</h3>
             <p>
-                <a href="https://arcraiders.com" target="_blank">🌐 Официальный сайт ARC Raiders</a><br>
-                <a href="https://discord.gg/nevskiy" target="_blank">💬 Discord сервер клана</a>
+                <a href="https://discord.gg/nevskiy" target="_blank">💬 Discord сервер клана</a><br>
+                <a href="https://www.twitch.tv/silovik_" target="_blank">🎮 Twitch создателя</a><br>
+                <a href="https://t.me/silovik_stream" target="_blank">✈️ Telegram канал Silovik</a>
             </p>
         </div>
         
