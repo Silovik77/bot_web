@@ -478,14 +478,9 @@ window.showClanNEPage = async function() {
   }
 };
 
-// ✅ НОВАЯ ФУНКЦИЯ: Отображение раздела Информация
 window.showInfoPage = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <div class="welcome-banner" style="margin-bottom: 20px;">
-      <img src="images/banner-gif_last.gif" alt="WELCOME" class="banner-image" style="max-height: 150px;">
-    </div>
-    
     <h2>ℹ️ Информация</h2>
     
     <div class="info-section">
@@ -533,10 +528,6 @@ window.showInfoPage = function() {
 window.showFeedbackPage = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <div class="welcome-banner" style="margin-bottom: 20px;">
-      <img src="images/banner-gif_last.gif" alt="WELCOME" class="banner-image" style="max-height: 150px;">
-    </div>
-    
     <h2>💬 Обратная связь</h2>
     
     <div class="info-section">
@@ -599,4 +590,5 @@ window.showFeedbackPage = function() {
 document.addEventListener('DOMContentLoaded', () => {
   window.showMainMenu();
 });
+
 
