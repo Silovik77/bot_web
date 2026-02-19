@@ -99,16 +99,18 @@ h3 {
 }
 
 /* Кнопки главного меню */
+/* Кнопки главного меню - убираем лишние отступы */
 .main-menu {
-  margin-top: auto;
-  padding-top: 30px;
+  margin-top: 0;
+  padding-top: 0;
+  width: 100%;
 }
 
 .menu-btn {
   display: block;
   width: 100%;
-  padding: 18px;
-  margin: 12px 0;
+  padding: 16px;
+  margin: 8px 0;
   font-size: 18px;
   font-weight: 600;
   color: white;
@@ -136,6 +138,12 @@ h3 {
 
 .menu-btn:hover::before {
   left: 100%;
+}
+
+.menu-btn:hover {
+  transform: translateY(-2px);
+  border-color: #00d4ff;
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
 }
 
 .menu-btn:hover {
@@ -471,3 +479,4 @@ code {
     padding: 12px;
   }
 }
+
