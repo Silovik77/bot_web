@@ -141,13 +141,21 @@ function applyFilters() {
 window.showMainMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <p style="text-align: center; font-size: 18px; margin-bottom: 30px;">Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h2 style="color: #00d4ff; text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); margin-bottom: 10px;">
+        ARC Raiders
+      </h2>
+      <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">
+        Ваш центр управления событиями и информацией
+      </p>
+    </div>
+    
     <div class="main-menu">
       <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
       <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
       <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
-      <button class="menu-btn" onclick="alert('Информация — в разработке')">ℹ️ Информация</button>
-      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">💬 Обратная связь</button>
+      <button class="menu-btn" onclick="window.showInfoPage()">ℹ️ Информация</button>
+      <button class="menu-btn" onclick="window.showFeedbackPage()">💬 Обратная связь</button>
     </div>
   `;
 };
@@ -477,6 +485,123 @@ window.showClanNEPage = async function() {
       <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
     `;
   }
+};
+
+// ✅ НОВАЯ ФУНКЦИЯ: Отображение раздела Информация
+window.showInfoPage = function() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <div class="welcome-banner" style="margin-bottom: 20px;">
+      <img src="images/banner-gif_last.gif" alt="WELCOME" class="banner-image" style="max-height: 150px;">
+    </div>
+    
+    <h2>ℹ️ Информация</h2>
+    
+    <div class="info-section">
+      <h3>🤖 О боте</h3>
+      <p>
+        Это официальный бот клана <strong>NE (NEVSKIY)</strong> для игры ARC Raiders.
+        Бот предоставляет актуальную информацию о событиях, мероприятиях клана 
+        и уведомления для стримеров.
+      </p>
+    </div>
+    
+    <div class="info-section">
+      <h3>🎮 Функции бота</h3>
+      <ul>
+        <li>📅 Отслеживание игровых событий ARC Raiders</li>
+        <li>📰 Новости и обновления игры</li>
+        <li>⚔️ Мероприятия клана NE</li>
+        <li>📺 Уведомления для стримеров</li>
+        <li>🎁 Информация о розыгрышах</li>
+      </ul>
+    </div>
+    
+    <div class="info-section">
+      <h3>👥 Клан NE</h3>
+      <p>
+        <strong>NE (NEVSKIY)</strong> — элитный клан ARC Raiders.
+        Мы организуем регулярные рейды, участвуем в ивентах и помогаем 
+        новичкам освоиться в игре.
+      </p>
+    </div>
+    
+    <div class="info-section">
+      <h3>🔗 Полезные ссылки</h3>
+      <p>
+        <a href="https://arcraiders.com" target="_blank">🌐 Официальный сайт ARC Raiders</a><br>
+        <a href="https://discord.gg/nevskiy" target="_blank">💬 Discord сервер клана</a>
+      </p>
+    </div>
+    
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
+  `;
+};
+
+// ✅ НОВАЯ ФУНКЦИЯ: Отображение раздела Обратная связь
+window.showFeedbackPage = function() {
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <div class="welcome-banner" style="margin-bottom: 20px;">
+      <img src="images/banner-gif_last.gif" alt="WELCOME" class="banner-image" style="max-height: 150px;">
+    </div>
+    
+    <h2>💬 Обратная связь</h2>
+    
+    <div class="info-section">
+      <h3>📩 Связаться с нами</h3>
+      <p>
+        У вас есть предложения, вопросы или вы нашли ошибку? 
+        Мы будем рады услышать ваше мнение!
+      </p>
+      
+      <div class="contact-methods">
+        <div class="contact-item">
+          <strong>💬 Discord:</strong><br>
+          <a href="https://discord.gg/nevskiy" target="_blank">Присоединиться к серверу</a>
+        </div>
+        
+        <div class="contact-item">
+          <strong>✈️ Telegram:</strong><br>
+          <a href="https://t.me/nevskiy_clan" target="_blank">Написать администратору</a>
+        </div>
+        
+        <div class="contact-item">
+          <strong>🎮 В игре:</strong><br>
+          Найдите участника клана NE и напишите ему
+        </div>
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <h3>❓ Частые вопросы</h3>
+      
+      <details>
+        <summary>Как вступить в клан?</summary>
+        <p>
+          Нажмите кнопку "Подать заявку в клан" в разделе "Клан NE" 
+          или напишите нам в Discord.
+        </p>
+      </details>
+      
+      <details>
+        <summary>Как подключить уведомления о стриме?</summary>
+        <p>
+          Перейдите в раздел "Стримерам" и заполните форму подключения.
+        </p>
+      </details>
+      
+      <details>
+        <summary>Как подписаться на уведомления о мероприятиях?</summary>
+        <p>
+          Используйте команду <code>/ne_subscribe</code> в боте 
+          или нажмите кнопку в разделе "Клан NE".
+        </p>
+      </details>
+    </div>
+    
+    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
+  `;
 };
 
 // --- Инициализация ---
