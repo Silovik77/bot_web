@@ -140,17 +140,17 @@ function applyFilters() {
 
 // --- Отображение главного меню ---
 window.showMainMenu = function() {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `
-        <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-        <div class="main-menu">
-            <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
-            <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
-            <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
-            <button class="menu-btn" onclick="alert('Информация — в разработке')">ℹ️ Информация</button>
-            <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">💬 Обратная связь</button>
-        </div>
-    `;
+  const mainContent = document.getElementById('main-content');
+  mainContent.innerHTML = `
+    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+    <div class="main-menu">
+      <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
+      <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
+      <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
+      <button class="menu-btn" onclick="alert('Информация — в разработке')">ℹ️ Информация</button>
+      <button class="menu-btn" onclick="alert('Обратная связь — в разработке')">💬 Обратная связь</button>
+    </div>
+  `;
 };
 
 // --- Отображение меню Arc Raiders ---
@@ -592,4 +592,5 @@ window.showFeedbackPage = function() {
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
+
 
