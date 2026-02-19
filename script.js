@@ -140,17 +140,17 @@ function applyFilters() {
 
 // --- Отображение главного меню ---
 window.showMainMenu = function() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
-    <div class="main-menu">
-      <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
-      <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
-      <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
-      <button class="menu-btn" onclick="window.showInfoPage()">ℹ️ Информация</button>
-      <button class="menu-btn" onclick="window.showFeedbackPage()">💬 Обратная связь</button>
-    </div>
-  `;
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <p>Добро пожаловать! Выберите раздел в меню ниже.</p>
+        <div class="main-menu">
+            <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
+            <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
+            <button class="menu-btn" onclick="window.showClanNEPage()">⚔️ Клан NE</button>
+            <button class="menu-btn" onclick="window.showInfoPage()">ℹ️ Информация</button>
+            <button class="menu-btn" onclick="window.showFeedbackPage()">💬 Обратная связь</button>
+        </div>
+    `;
 };
 
 // --- Отображение меню Arc Raiders ---
@@ -160,8 +160,8 @@ window.showArcRaidersMenu = function() {
         <h2>🎮 Arc Raiders</h2>
         <button class="submenu-btn" onclick="window.showEvents()">📅 События</button>
         <button class="submenu-btn" onclick="window.showNews()">📰 Обновления</button>
+        <button class="submenu-btn" onclick="window.showTrialsPage()">🏆 Испытания</button>
         <button class="submenu-btn" onclick="alert('Раздел \'Гайды\' в разработке.')">📚 Гайды</button>
-        <button class="submenu-btn" onclick="alert('Раздел \'Испытание\' в разработке.')">🏆 Испытание</button>
         <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
     `;
 };
@@ -305,6 +305,75 @@ window.showEvents = async function() {
         const mainContent = document.getElementById('main-content');
         mainContent.innerHTML = `
             <p style="color: red;">❌ Ошибка: ${error.message}</p>
+            <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
+        `;
+    }
+};
+
+// --- Отображение раздела Испытания ---
+window.showTrialsPage = async function() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `<h2>🏆 Еженедельные испытания</h2><p>Загрузка...</p>`;
+    
+    try {
+        const response = await fetch(`${API_URL}/api/trials`);
+        const data = await response.json();
+        const trials = data.trials || [];
+        
+        if (trials.length === 0) {
+            mainContent.innerHTML = `
+                <h2>🏆 Еженедельные испытания</h2>
+                <p>Испытания пока не добавлены.</p>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">
+                    Администратор ещё не добавил испытания на эту неделю.
+                </p>
+                <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
+            `;
+            return;
+        }
+        
+        let html = '<h2>🏆 Еженедельные испытания</h2>';
+        html += '<p style="margin-bottom: 20px; color: rgba(255,255,255,0.7);">Актуальные испытания на эту неделю</p>';
+        
+        trials.forEach((trial, index) => {
+            // Путь к изображению (для GitHub Pages)
+            const imagePath = trial.image_path.replace('/data/', '../data/');
+            
+            html += `
+                <div class="trial-card" style="
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(0, 212, 255, 0.3);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin: 15px 0;
+                    backdrop-filter: blur(10px);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0, 212, 255, 0.3)';" 
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    
+                    <img src="${imagePath}" 
+                         alt="Испытание ${index + 1}" 
+                         style="width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+                    
+                    <h3 style="color: #00d4ff; margin: 10px 0; text-align: center;">📝 ${trial.title}</h3>
+                    
+                    ${trial.date_added ? `
+                        <p style="font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
+                            📅 Добавлено: ${new Date(trial.date_added).toLocaleDateString('ru-RU')}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+        });
+        
+        html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>';
+        mainContent.innerHTML = html;
+        
+    } catch (error) {
+        console.error('Ошибка загрузки испытаний:', error);
+        mainContent.innerHTML = `
+            <h2>🏆 Еженедельные испытания</h2>
+            <p style="color: red;">❌ Ошибка загрузки: ${error.message}</p>
             <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
         `;
     }
@@ -481,259 +550,114 @@ window.showClanNEPage = async function() {
 };
 
 window.showInfoPage = function() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <h2>ℹ️ Информация</h2>
-    
-    <div class="info-section">
-      <h3>🤖 О боте</h3>
-      <p>
-        Это официальный бот клана <strong>NE (NEVSKIY)</strong> для игры ARC Raiders.
-        Бот предоставляет актуальную информацию о событиях, мероприятиях клана 
-        и уведомления для стримеров.
-      </p>
-    </div>
-    
-    <div class="info-section">
-      <h3>🎮 Функции бота</h3>
-      <ul>
-        <li>📅 Отслеживание игровых событий ARC Raiders</li>
-        <li>📰 Новости и обновления игры</li>
-        <li>⚔️ Мероприятия клана NE</li>
-        <li>📺 Уведомления для стримеров</li>
-        <li>🎁 Информация о розыгрышах</li>
-      </ul>
-    </div>
-    
-    <div class="info-section">
-      <h3>👨‍💻 Создатель бота</h3>
-      <p>
-        <strong>🛡️ SILOVIK</strong> — разработчик и администратор бота.
-      </p>
-    </div>
-    
-    <div class="info-section">
-      <h3>🔗 Полезные ссылки</h3>
-      <p>
-        <a href="https://discord.gg/nevskiy" target="_blank">💬 Discord сервер клана</a><br>
-        <a href="https://www.twitch.tv/silovik_" target="_blank">🎮 Twitch создателя</a><br>
-        <a href="https://t.me/silovik_stream" target="_blank">✈️ Telegram канал Silovik</a>
-      </p>
-    </div>
-    
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
-  `;
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2>ℹ️ Информация</h2>
+        
+        <div class="info-section">
+            <h3>🤖 О боте</h3>
+            <p>
+                Это официальный бот клана <strong>NE (NEVSKIY)</strong> для игры ARC Raiders.
+                Бот предоставляет актуальную информацию о событиях, мероприятиях клана 
+                и уведомления для стримеров.
+            </p>
+        </div>
+        
+        <div class="info-section">
+            <h3>🎮 Функции бота</h3>
+            <ul>
+                <li>📅 Отслеживание игровых событий ARC Raiders</li>
+                <li>📰 Новости и обновления игры</li>
+                <li>⚔️ Мероприятия клана NE</li>
+                <li>📺 Уведомления для стримеров</li>
+                <li>🎁 Информация о розыгрышах</li>
+            </ul>
+        </div>
+        
+        <div class="info-section">
+            <h3>👥 Клан NE</h3>
+            <p>
+                <strong>NE (NEVSKIY)</strong> — элитный клан ARC Raiders.
+                Мы организуем регулярные рейды, участвуем в ивентах и помогаем 
+                новичкам освоиться в игре.
+            </p>
+        </div>
+        
+        <div class="info-section">
+            <h3>🔗 Полезные ссылки</h3>
+            <p>
+                <a href="https://arcraiders.com" target="_blank">🌐 Официальный сайт ARC Raiders</a><br>
+                <a href="https://discord.gg/nevskiy" target="_blank">💬 Discord сервер клана</a>
+            </p>
+        </div>
+        
+        <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
+    `;
 };
 
 // ✅ НОВАЯ ФУНКЦИЯ: Отображение раздела Обратная связь
 window.showFeedbackPage = function() {
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = `
-    <h2>💬 Обратная связь</h2>
-    
-    <!-- Форма для баг-репорта / предложения -->
-    <div class="info-section">
-      <h3>📩 Отправить сообщение</h3>
-      <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 15px;">
-        💡 Ваше сообщение придёт администратору бота. Отправка анонимна.<br>
-        ⏱️ <strong>Ограничение:</strong> 1 сообщение в 30 минут.
-      </p>
-      
-      <div style="margin-bottom: 12px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Тип сообщения:</label>
-        <select id="feedback-type" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff;">
-          <option value="bug">🐛 Баг-репорт (ошибка)</option>
-          <option value="suggestion">💡 Предложение / идея</option>
-        </select>
-      </div>
-      
-      <div style="margin-bottom: 12px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Ваше сообщение:</label>
-        <textarea id="feedback-message" rows="4" placeholder="Опишите проблему или идею подробно... (мин. 10 символов)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0, 212, 255, 0.4); background: rgba(0, 0, 0, 0.4); color: #fff; resize: vertical;"></textarea>
-        <p id="char-count" style="font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 5px; text-align: right;">0 / 2000</p>
-      </div>
-      
-      <button class="submenu-btn" style="background: rgba(0, 212, 255, 0.8);" onclick="window.sendFeedback()">📤 Отправить</button>
-      <p id="feedback-status" style="margin-top: 10px; font-size: 14px;"></p>
-    </div>
-    
-    <!-- Контакты -->
-    <div class="info-section">
-      <h3>🔗 Другие способы связи</h3>
-      <div class="contact-methods">
-        <div class="contact-item">
-          <strong>💬 Discord:</strong><br>
-          <a href="https://discord.gg/nevskiy" target="_blank">Присоединиться к серверу</a>
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `
+        <h2>💬 Обратная связь</h2>
+        
+        <div class="info-section">
+            <h3>📩 Связаться с нами</h3>
+            <p>
+                У вас есть предложения, вопросы или вы нашли ошибку? 
+                Мы будем рады услышать ваше мнение!
+            </p>
+            
+            <div class="contact-methods">
+                <div class="contact-item">
+                    <strong>💬 Discord:</strong><br>
+                    <a href="https://discord.gg/nevskiy" target="_blank">Присоединиться к серверу</a>
+                </div>
+                
+                <div class="contact-item">
+                    <strong>✈️ Telegram:</strong><br>
+                    <a href="https://t.me/nevskiy_clan" target="_blank">Написать администратору</a>
+                </div>
+                
+                <div class="contact-item">
+                    <strong>🎮 В игре:</strong><br>
+                    Найдите участника клана NE и напишите ему
+                </div>
+            </div>
         </div>
-        <div class="contact-item">
-          <strong>✈️ Telegram:</strong><br>
-          <a href="https://t.me/nevskiy_clan" target="_blank">Написать администратору</a>
+        
+        <div class="info-section">
+            <h3>❓ Частые вопросы</h3>
+            
+            <details>
+                <summary>Как вступить в клан?</summary>
+                <p>
+                    Нажмите кнопку "Подать заявку в клан" в разделе "Клан NE" 
+                    или напишите нам в Discord.
+                </p>
+            </details>
+            
+            <details>
+                <summary>Как подключить уведомления о стриме?</summary>
+                <p>
+                    Перейдите в раздел "Стримерам" и заполните форму подключения.
+                </p>
+            </details>
+            
+            <details>
+                <summary>Как подписаться на уведомления о мероприятиях?</summary>
+                <p>
+                    Используйте команду <code>/ne_subscribe</code> в боте 
+                    или нажмите кнопку в разделе "Клан NE".
+                </p>
+            </details>
         </div>
-      </div>
-    </div>
-    
-    <!-- FAQ -->
-    <div class="info-section">
-      <h3>❓ Частые вопросы</h3>
-      <details>
-        <summary>Как вступить в клан?</summary>
-        <p>Нажмите кнопку "Подать заявку в клан" в разделе "Клан NE" или напишите нам в Discord.</p>
-      </details>
-      <details>
-        <summary>Как подключить уведомления о стриме?</summary>
-        <p>Перейдите в раздел "Стримерам" и заполните форму подключения.</p>
-      </details>
-      <details>
-        <summary>Как подписаться на уведомления о мероприятиях?</summary>
-        <p>Используйте команду <code>/ne_subscribe</code> в боте или нажмите кнопку в разделе "Клан NE".</p>
-      </details>
-    </div>
-    
-    <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
-  `;
-  
-  // Добавляем счётчик символов
-  const textarea = document.getElementById('feedback-message');
-  const charCount = document.getElementById('char-count');
-  if (textarea && charCount) {
-    textarea.addEventListener('input', () => {
-      const len = textarea.value.length;
-      charCount.textContent = `${len} / 2000`;
-      charCount.style.color = len < 10 ? '#ff6b6b' : len > 2000 ? '#ff6b6b' : '#00ff88';
-    });
-  }
-  
-  // Проверяем, не заблокирована ли отправка
-  window.checkFeedbackCooldown();
-};
-
-// ✅ ПРОВЕРКА: Ограничение по времени (30 минут)
-window.checkFeedbackCooldown = function() {
-  const lastSubmission = localStorage.getItem('feedback_last_submission');
-  const btn = document.querySelector('button[onclick="window.sendFeedback()"]');
-  const statusEl = document.getElementById('feedback-status');
-  
-  if (lastSubmission && btn) {
-    const now = Date.now();
-    const timeDiff = now - parseInt(lastSubmission);
-    const cooldown = 1800000; // 30 минут в миллисекундах
-    
-    if (timeDiff < cooldown) {
-      const remaining = cooldown - timeDiff;
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-      
-      btn.disabled = true;
-      btn.innerHTML = `⏳ Подождите ${minutes} мин ${seconds} сек`;
-      btn.style.background = 'rgba(100, 100, 100, 0.8)';
-      
-      if (statusEl) {
-        statusEl.innerHTML = '<span style="color: #ff6b6b;">⏱️ Лимит: 1 сообщение в 30 минут</span>';
-      }
-      
-      // Обновляем таймер каждую секунду
-      const timer = setInterval(() => {
-        const newRemaining = cooldown - (Date.now() - parseInt(lastSubmission));
-        if (newRemaining <= 0) {
-          clearInterval(timer);
-          btn.disabled = false;
-          btn.innerHTML = '📤 Отправить';
-          btn.style.background = 'rgba(0, 212, 255, 0.8)';
-          if (statusEl) statusEl.innerHTML = '';
-        } else {
-          const newMinutes = Math.floor(newRemaining / 60000);
-          const newSeconds = Math.floor((newRemaining % 60000) / 1000);
-          btn.innerHTML = `⏳ Подождите ${newMinutes} мин ${newSeconds} сек`;
-        }
-      }, 1000);
-      
-      return false;
-    }
-  }
-  
-  if (btn) {
-    btn.disabled = false;
-    btn.innerHTML = '📤 Отправить';
-    btn.style.background = 'rgba(0, 212, 255, 0.8)';
-  }
-  if (statusEl) statusEl.innerHTML = '';
-  return true;
-};
-
-// ✅ НОВАЯ ФУНКЦИЯ: Отправка обратной связи
-window.sendFeedback = async function() {
-  // Проверяем cooldown
-  if (!window.checkFeedbackCooldown()) {
-    return;
-  }
-  
-  const type = document.getElementById('feedback-type')?.value;
-  const message = document.getElementById('feedback-message')?.value.trim();
-  const statusEl = document.getElementById('feedback-status');
-  
-  // Валидация
-  if (!message) {
-    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Напишите сообщение</span>';
-    return;
-  }
-  if (message.length < 10) {
-    statusEl.innerHTML = `<span style="color: #ff6b6b;">❌ Слишком коротко (нужно минимум 10 символов, сейчас: ${message.length})</span>`;
-    return;
-  }
-  if (message.length > 2000) {
-    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Слишком длинно (максимум 2000 символов)</span>';
-    return;
-  }
-  
-  // Блокируем кнопку во время отправки
-  const btn = event?.target;
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Отправка...';
-  }
-  
-  try {
-    const response = await fetch(`${API_URL}/api/feedback`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, message })
-    });
-    
-    const result = await response.json();
-    
-    if (response.ok) {
-      // Сохраняем время отправки в localStorage
-      localStorage.setItem('feedback_last_submission', Date.now().toString());
-      
-      statusEl.innerHTML = '<span style="color: #00ff88;">✅ ' + result.message + '</span>';
-      document.getElementById('feedback-message').value = ''; // Очистить поле
-      if (document.getElementById('char-count')) {
-        document.getElementById('char-count').textContent = '0 / 2000';
-      }
-      
-      // Блокируем кнопку на 30 минут
-      window.checkFeedbackCooldown();
-    } else {
-      statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ ' + (result.error || 'Ошибка отправки') + '</span>';
-    }
-  } catch (error) {
-    console.error('Ошибка отправки feedback:', error);
-    statusEl.innerHTML = '<span style="color: #ff6b6b;">❌ Не удалось отправить. Проверьте соединение.</span>';
-  } finally {
-    // Разблокируем кнопку (но cooldown всё равно активен)
-    if (btn) {
-      btn.disabled = false;
-    }
-  }
+        
+        <button class="submenu-btn back-btn" onclick="window.showMainMenu()">← Назад</button>
+    `;
 };
 
 // --- Инициализация ---
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
-
-
-
-
-
-
