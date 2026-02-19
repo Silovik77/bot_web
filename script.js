@@ -141,15 +141,6 @@ function applyFilters() {
 window.showMainMenu = function() {
   const mainContent = document.getElementById('main-content');
   mainContent.innerHTML = `
-    <div style="text-align: center; margin-bottom: 20px;">
-      <h2 style="color: #00d4ff; text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); margin-bottom: 10px;">
-        ARC Raiders
-      </h2>
-      <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">
-        Ваш центр управления событиями и информацией
-      </p>
-    </div>
-    
     <div class="main-menu">
       <button class="menu-btn" onclick="window.showArcRaidersMenu()">🎮 Arc Raiders</button>
       <button class="menu-btn" onclick="window.showStreamersForm()">📺 Стримерам</button>
@@ -608,3 +599,4 @@ window.showFeedbackPage = function() {
 document.addEventListener('DOMContentLoaded', () => {
   window.showMainMenu();
 });
+
