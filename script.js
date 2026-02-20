@@ -192,7 +192,7 @@ window.showTrialsPage = async function() {
         html += '<p style="margin-bottom: 20px; color: rgba(255,255,255,0.7);">Актуальные испытания на эту неделю</p>';
         
         trials.forEach((trial, index) => {
-            const imagePath = trial.image_path.replace('/data/', '../data/');
+        const imagePath = `https://silovik77.github.io/bot_web/${trial.image_path}`;
             
             html += `
                 <div class="trial-card" style="
@@ -658,3 +658,4 @@ window.showFeedbackPage = function() {
 document.addEventListener('DOMContentLoaded', () => {
     window.showMainMenu();
 });
+
