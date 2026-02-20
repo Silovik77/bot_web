@@ -1,4 +1,4 @@
-// Укажите ваш реальный URL Amvera (без пробелов!)
+// Укажите ваш реальный URL Amvera
 const API_URL = 'https://silovik-silovik.waw0.amvera.tech';
 
 // --- Словари перевода ---
@@ -166,6 +166,74 @@ window.showArcRaidersMenu = function() {
     `;
 };
 
+// --- Отображение раздела Испытания ---
+window.showTrialsPage = async function() {
+    const mainContent = document.getElementById('main-content');
+    mainContent.innerHTML = `<h2>🏆 Еженедельные испытания</h2><p>Загрузка...</p>`;
+    
+    try {
+        const response = await fetch(`${API_URL}/api/trials`);
+        const data = await response.json();
+        const trials = data.trials || [];
+        
+        if (trials.length === 0) {
+            mainContent.innerHTML = `
+                <h2>🏆 Еженедельные испытания</h2>
+                <p>Испытания пока не добавлены.</p>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">
+                    Администратор ещё не добавил испытания на эту неделю.
+                </p>
+                <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
+            `;
+            return;
+        }
+        
+        let html = '<h2>🏆 Еженедельные испытания</h2>';
+        html += '<p style="margin-bottom: 20px; color: rgba(255,255,255,0.7);">Актуальные испытания на эту неделю</p>';
+        
+        trials.forEach((trial, index) => {
+            const imagePath = trial.image_path.replace('/data/', '../data/');
+            
+            html += `
+                <div class="trial-card" style="
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(0, 212, 255, 0.3);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin: 15px 0;
+                    backdrop-filter: blur(10px);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0, 212, 255, 0.3)';" 
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    
+                    <img src="${imagePath}" 
+                         alt="Испытание ${index + 1}" 
+                         style="width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+                    
+                    <h3 style="color: #00d4ff; margin: 10px 0; text-align: center;">📝 ${trial.title}</h3>
+                    
+                    ${trial.date_added ? `
+                        <p style="font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
+                            📅 Добавлено: ${new Date(trial.date_added).toLocaleDateString('ru-RU')}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+        });
+        
+        html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>';
+        mainContent.innerHTML = html;
+        
+    } catch (error) {
+        console.error('Ошибка загрузки испытаний:', error);
+        mainContent.innerHTML = `
+            <h2>🏆 Еженедельные испытания</h2>
+            <p style="color: red;">❌ Ошибка загрузки: ${error.message}</p>
+            <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
+        `;
+    }
+};
+
 // --- Отображение новостей ---
 window.showNews = async function() {
     try {
@@ -305,74 +373,6 @@ window.showEvents = async function() {
         const mainContent = document.getElementById('main-content');
         mainContent.innerHTML = `
             <p style="color: red;">❌ Ошибка: ${error.message}</p>
-            <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
-        `;
-    }
-};
-
-// --- Отображение раздела Испытания ---
-window.showTrialsPage = async function() {
-    const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = `<h2>🏆 Еженедельные испытания</h2><p>Загрузка...</p>`;
-    
-    try {
-        const response = await fetch(`${API_URL}/api/trials`);
-        const data = await response.json();
-        const trials = data.trials || [];
-        
-        if (trials.length === 0) {
-            mainContent.innerHTML = `
-                <h2>🏆 Еженедельные испытания</h2>
-                <p>Испытания пока не добавлены.</p>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">
-                    Администратор ещё не добавил испытания на эту неделю.
-                </p>
-                <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
-            `;
-            return;
-        }
-        
-        let html = '<h2>🏆 Еженедельные испытания</h2>';
-        html += '<p style="margin-bottom: 20px; color: rgba(255,255,255,0.7);">Актуальные испытания на эту неделю</p>';
-        
-        trials.forEach((trial, index) => {
-            const imagePath = trial.image_path.replace('/data/', '../data/');
-            
-            html += `
-                <div class="trial-card" style="
-                    background: rgba(255, 255, 255, 0.05);
-                    border: 1px solid rgba(0, 212, 255, 0.3);
-                    border-radius: 12px;
-                    padding: 20px;
-                    margin: 15px 0;
-                    backdrop-filter: blur(10px);
-                    transition: all 0.3s ease;
-                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0, 212, 255, 0.3)';" 
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                    
-                    <img src="${imagePath}" 
-                         alt="Испытание ${index + 1}" 
-                         style="width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
-                    
-                    <h3 style="color: #00d4ff; margin: 10px 0; text-align: center;">📝 ${trial.title}</h3>
-                    
-                    ${trial.date_added ? `
-                        <p style="font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
-                            📅 Добавлено: ${new Date(trial.date_added).toLocaleDateString('ru-RU')}
-                        </p>
-                    ` : ''}
-                </div>
-            `;
-        });
-        
-        html += '<button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>';
-        mainContent.innerHTML = html;
-        
-    } catch (error) {
-        console.error('Ошибка загрузки испытаний:', error);
-        mainContent.innerHTML = `
-            <h2>🏆 Еженедельные испытания</h2>
-            <p style="color: red;">❌ Ошибка загрузки: ${error.message}</p>
             <button class="submenu-btn back-btn" onclick="window.showArcRaidersMenu()">← Назад</button>
         `;
     }
@@ -593,7 +593,6 @@ window.showInfoPage = function() {
     `;
 };
 
-// ✅ НОВАЯ ФУНКЦИЯ: Отображение раздела Обратная связь
 window.showFeedbackPage = function() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
